@@ -32,4 +32,3 @@ print(cube)
 # print(Color.WHITE == Color.WHITE)
 # print(Position.get_positions())
 # Position.get_good_position('F')
-

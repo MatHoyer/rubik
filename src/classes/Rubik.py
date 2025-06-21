@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from typing import Dict, List
+from typing import List
 
 from .Color import Color, c
 from .Position import Position, PRIME, DOUBLE
@@ -38,6 +38,7 @@ class Face:
     def counter_rotate(self):
         self._content = np.rot90(self._content)
 
+
 class Rubik:
     _front = Face(Color.BLUE)
     _back = Face(Color.GREEN)
@@ -51,18 +52,25 @@ class Rubik:
     def __init__(self, mix: str) -> None:
         instructions = mix.strip().split(' ')
         for instruction in instructions:
+            assert 1 <= len(instruction) <= 2
+            for char in instruction:
+                assert char in Position.get_positions() or char in [PRIME, DOUBLE]
+        for instruction in instructions:
             self.find_good_action(instruction=instruction)
 
     def __str__(self):
-       return f'''
+        return f'''
         ┌───────┐
         │ {' '.join(map(c, self._top[0]))} │
         │ {' '.join(map(c, self._top[1]))} │
         │ {' '.join(map(c, self._top[2]))} │
 ┌───────┼───────┼───────┬───────┐
-│ {' '.join(map(c, self._left[0]))} │ {' '.join(map(c, self._front[0]))} │ {' '.join(map(c, self._right[0]))} │ {' '.join(map(c, self._back[0]))} │
-│ {' '.join(map(c, self._left[1]))} │ {' '.join(map(c, self._front[1]))} │ {' '.join(map(c, self._right[1]))} │ {' '.join(map(c, self._back[1]))} │
-│ {' '.join(map(c, self._left[2]))} │ {' '.join(map(c, self._front[2]))} │ {' '.join(map(c, self._right[2]))} │ {' '.join(map(c, self._back[2]))} │
+│ {' '.join(map(c, self._left[0]))} │ {' '.join(map(c, self._front[0]))} │ \
+{' '.join(map(c, self._right[0]))} │ {' '.join(map(c, self._back[0]))} │
+│ {' '.join(map(c, self._left[1]))} │ {' '.join(map(c, self._front[1]))} │ \
+{' '.join(map(c, self._right[1]))} │ {' '.join(map(c, self._back[1]))} │
+│ {' '.join(map(c, self._left[2]))} │ {' '.join(map(c, self._front[2]))} │ \
+{' '.join(map(c, self._right[2]))} │ {' '.join(map(c, self._back[2]))} │
 └───────┼───────┼───────┴───────┘
         │ {' '.join(map(c, self._bottom[0]))} │
         │ {' '.join(map(c, self._bottom[1]))} │
@@ -85,13 +93,9 @@ class Rubik:
         '''
         Instruction is a max 2caracs string like: "U", "F2"
         '''
-        length = len(instruction)
-        if not 1 <= length <= 2:
-            raise ValueError(f'Invalid instruction: expected length 1 or 2 get {length}')
-
         position = Position.get_good_position(pos=instruction[0])
 
-        if length == 1:
+        if len(instruction) == 1:
             self.rotate(position=position)
         elif instruction[1] == PRIME:
             self.counter_rotate(position=position)
@@ -147,8 +151,6 @@ class Rubik:
                 self._front.rotate()
             case Position.BACK:
                 self._back.counter_rotate()
-            case _:
-                raise ValueError(f'Invalid position')
 
     def counter_rotate(self, position: Position) -> None:
         logging.info(f'counter_rotate: {position}')
@@ -197,8 +199,6 @@ class Rubik:
                 self._front.counter_rotate()
             case Position.BACK:
                 self._back.rotate()
-            case _:
-                raise ValueError(f'Invalid position')
 
     def double_rotate(self, position: Position) -> None:
         logging.info(f'double_rotate: {position}')

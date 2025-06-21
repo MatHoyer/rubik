@@ -3,6 +3,7 @@ from enum import Enum
 PRIME = '\''
 DOUBLE = '2'
 
+
 class Position(Enum):
     TOP = 'U'
     BOTTOM = 'D'
@@ -14,7 +15,7 @@ class Position(Enum):
     @staticmethod
     def get_positions():
         return list(Position)
-    
+
     @staticmethod
     def get_good_position(pos: str):
         positions = Position.get_positions()

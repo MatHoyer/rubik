@@ -18,17 +18,20 @@ from classes.Rubik import Rubik
 from classes.Color import Color
 from classes.Position import Position
 
-args = sys.argv[1:]
-
 logging.basicConfig(
     level=logging.INFO,
     format='%(levelname)s: %(message)s ---- %(asctime)s'
 )
 
-cube = Rubik(mix=args[0])
-print(cube)
-# print(cube._front)
-# print(cube._front[0][0] == Color.WHITE)
-# print(Color.WHITE == Color.WHITE)
-# print(Position.get_positions())
-# Position.get_good_position('F')
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    mix = None
+    if len(args) == 1:
+        mix = sys.argv[0]
+        try:
+            mix = int(mix)
+        except Exception:
+            logging.info('Mix profided')
+
+    cube = Rubik(mix=mix)
+    print(cube)

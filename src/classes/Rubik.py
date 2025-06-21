@@ -1,6 +1,7 @@
 import numpy as np
 import logging
 from typing import List
+import random
 
 from .Color import Color, c
 from .Position import Position, PRIME, DOUBLE
@@ -18,6 +19,9 @@ class Face:
 
     def __setitem__(self, key, value):
         self._content[key] = value
+
+    def get_center(self):
+        return self._content[1][1]
 
     def change_line(self, index: int, colors: List[Color]):
         if not 0 <= index <= 2:
@@ -49,7 +53,13 @@ class Rubik:
     _right = Face(Color.RED)
     _left = Face(Color.ORANGE)
 
-    def __init__(self, mix: str) -> None:
+    def __init__(self, mix: str | int | None) -> None:
+        if mix is None:
+            mix = 20
+        if isinstance(mix, int):
+            logging.info('no specific mix provided start random mix')
+            mix = self.random_mix(length=mix)
+            logging.info(f'random mix is: {mix}')
         instructions = mix.strip().split(' ')
         for instruction in instructions:
             assert 1 <= len(instruction) <= 2
@@ -88,6 +98,16 @@ class Rubik:
         for i in range(3):
             col.append(face[i][index])
         return np.copy(col)
+
+    @staticmethod
+    def random_mix(length: int):
+        mix = []
+        positions = Position.get_positions()
+        for _ in range(length):
+            instruction = '' + random.choice(positions).value
+            instruction += random.choice([PRIME, DOUBLE, ''])
+            mix.append(instruction)
+        return ' '.join(mix)
 
     def find_good_action(self, instruction: str) -> None:
         '''

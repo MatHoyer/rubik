@@ -53,13 +53,11 @@ class Rubik:
     _right = Face(Color.RED)
     _left = Face(Color.ORANGE)
 
-    def __init__(self, mix: str | int | None) -> None:
-        if mix is None:
-            mix = 20
+    def __init__(self, mix: str | int) -> None:
         if isinstance(mix, int):
-            logging.info('no specific mix provided start random mix')
+            logging.info('Start random mix')
             mix = self.random_mix(length=mix)
-            logging.info(f'random mix is: {mix}')
+            logging.info(f'Random mix is: {mix}')
         instructions = mix.strip().split(' ')
         for instruction in instructions:
             assert 1 <= len(instruction) <= 2

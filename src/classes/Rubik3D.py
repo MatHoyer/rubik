@@ -1,4 +1,4 @@
-from ursina import Ursina, Entity, Vec3, EditorCamera
+from ursina import Ursina, Entity, Vec3, EditorCamera, curve
 from .Rubik import Rubik
 from .Color import Color, colors
 import numpy as np
@@ -24,15 +24,24 @@ class Rubik3D(Rubik):
         # -------------------------------------------------------------------------------------------------
 
         # axes.animate("rotation_y", axes.rotation_y+360, duration=5, curve=curve.in_out_expo)
+        # self._back[1][0] = "O"
+        # print(self._back)
+        radius = .51
         for x in range(3):
             for y in range(3):
                 for z in range(3):
-                    print(cube[x, y, z], x, y, z)
                     if z == 0:
-                        Entity(model='quad', color=colors[Color.BLUE], scale=.7, position=Vec3(x - 1, y - 1, z - 1 - .46), rotation_y=0, rotation_x=0)
+                        Entity(model='quad', color=colors[self._front[y][x]], scale=.7, position=Vec3(0, 0, -radius), parent=cube[x, y, z])
                     elif z == 2:
-                        Entity(model='quad', color=colors[Color.GREEN], scale=.7, position=Vec3(x - 1, y - 1, z - 1 + .46), rotation_y=180, rotation_x=0)
-
+                        Entity(model='quad', color=colors[self._back[y][x]], scale=.7, position=Vec3(0, 0, radius), rotation_y=180, parent=cube[x, y, z])
+                    if y == 0:
+                        Entity(model='quad', color=colors[self._bottom[y][x]], scale=.7, position=Vec3(0, -radius, 0), rotation_x=-90, parent=cube[x, y, z])
+                    elif y == 2:
+                        Entity(model='quad', color=colors[self._top[y][x]], scale=.7, position=Vec3(0, radius, 0), rotation_x=90, parent=cube[x, y, z])
+                    if x == 0:
+                        Entity(model='quad', color=colors[self._left[y][x]], scale=.7, position=Vec3(-radius, 0, 0), rotation_y=90, parent=cube[x, y, z])
+                    elif x == 2:
+                        Entity(model='quad', color=colors[self._right[y][x]], scale=.7, position=Vec3(radius, 0, 0), rotation_y=-90, parent=cube[x, y, z])
         # yellow = [0,0,0,0,0,0,0,0,0]
         # blue = [0,0,0,0,0,0,0,0,0]
         # green = [0,0,0,0,0,0,0,0,0]
@@ -40,23 +49,20 @@ class Rubik3D(Rubik):
         # blue[6] = Entity(model='quad', color=colors["blue"], scale=.7, position=Vec3(-1, 1.46, -1), rotation_x=90)
         # green[2] = Entity(model='quad', color=colors["green"], scale=.7, position=Vec3(-1.46, 1, -1), rotation_y=90)
 
-        # cube_test = Entity()
-        # yellow[0].parent = cube_test
-        # blue[6].parent = cube_test
-        # green[2].parent = cube_test
-        # cube[6].parent = cube_test
-        # cube[7].parent = cube_test
-        # cube[8].parent = cube_test
+        cube_test = Entity()
+        cube[0][0][0].parent = cube_test
+        cube[1][0][0].parent = cube_test
+        cube[2][0][0].parent = cube_test
 
-        # cube[15].parent = cube_test
-        # cube[16].parent = cube_test
-        # cube[17].parent = cube_test
+        cube[0][1][0].parent = cube_test
+        cube[1][1][0].parent = cube_test
+        cube[2][1][0].parent = cube_test
 
-        # cube[24].parent = cube_test
-        # cube[25].parent = cube_test
-        # cube[26].parent = cube_test
+        cube[0][2][0].parent = cube_test
+        cube[1][2][0].parent = cube_test
+        cube[2][2][0].parent = cube_test
 
-        # cube_test.animate("rotation_y", round(cube_test.rotation_y) + 360, duration=1, curve=curve.in_out_expo)
+        cube_test.animate("rotation_z", round(cube_test.rotation_z) + 360, duration=5, curve=curve.in_out_expo)
 
         EditorCamera()
         self.app.run()

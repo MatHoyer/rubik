@@ -63,8 +63,8 @@ class Rubik:
             assert 1 <= len(instruction) <= 2
             for char in instruction:
                 assert char in Position.get_positions() or char in [PRIME, DOUBLE]
-        for instruction in instructions:
-            self.find_good_action(instruction=instruction)
+        # for instruction in instructions:
+        #     self.find_good_action(instruction=instruction)
 
     def __str__(self):
         return f'''

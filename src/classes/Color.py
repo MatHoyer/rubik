@@ -8,9 +8,13 @@ class Color(Enum):
     ORANGE = 'O'
     BLUE = 'B'
     GREEN = 'G'
+    BLACK = 'black'
 
     def __str__(self):
         return self.value
+
+    def __hash__(self):
+        return hash(self.value)
 
     def __eq__(self, other: object | str) -> bool:
         if isinstance(other, Color):
@@ -36,3 +40,14 @@ def c(color: Color):
             return "\033[48;5;208m \033[0m"
         case _:
             raise ValueError('Invalid color')
+
+
+colors = {
+    Color.WHITE: '#FFFFFF',
+    Color.YELLOW: '#FFFF00',
+    Color.RED: '#FF0000',
+    Color.ORANGE: "#FFAA00",
+    Color.BLUE: '#0000FF',
+    Color.GREEN: '#00FF00',
+    Color.BLACK: "#000000"
+    }

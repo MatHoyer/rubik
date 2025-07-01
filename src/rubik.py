@@ -3,6 +3,7 @@ import argparse
 from classes.Rubik import Rubik
 from classes.Color import Color
 from classes.Position import Position
+from classes.Rubik3D import Rubik3D
 
 logging.basicConfig(
     level=logging.INFO,
@@ -40,5 +41,6 @@ if __name__ == "__main__":
         if args.range is not None:
             parser.error("Option --range can\'t be used without --random")
 
-    cube = Rubik(mix=args.mix if args.mix else random_range)
+    # cube = Rubik(mix=args.mix if args.mix else random_range)
+    cube = Rubik3D(mix=args.mix if args.mix else random_range)
     print(cube)

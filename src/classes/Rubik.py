@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from typing import List, NamedTuple, Callable
+from typing import List
 import random
 
 from .Color import Color, c

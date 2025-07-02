@@ -63,8 +63,8 @@ class Rubik:
             assert 1 <= len(instruction) <= 2
             for char in instruction:
                 assert char in Position.get_positions() or char in [PRIME, DOUBLE]
-        # for instruction in instructions:
-        #     self.find_good_action(instruction=instruction)
+        for instruction in instructions:
+            self.find_good_action(instruction=instruction)
 
     def __str__(self):
         return f'''
@@ -74,11 +74,11 @@ class Rubik:
         │ {' '.join(map(c, self._top[2]))} │
 ┌───────┼───────┼───────┬───────┐
 │ {' '.join(map(c, self._left[0]))} │ {' '.join(map(c, self._front[0]))} │ \
-{' '.join(map(c, self._right[0]))} │ {' '.join(map(c, self._back[0]))} │
+{' '.join(map(c, self._right[0]))} │ {' '.join(map(c, self._back[0][::-1]))} │
 │ {' '.join(map(c, self._left[1]))} │ {' '.join(map(c, self._front[1]))} │ \
-{' '.join(map(c, self._right[1]))} │ {' '.join(map(c, self._back[1]))} │
+{' '.join(map(c, self._right[1]))} │ {' '.join(map(c, self._back[1][::-1]))} │
 │ {' '.join(map(c, self._left[2]))} │ {' '.join(map(c, self._front[2]))} │ \
-{' '.join(map(c, self._right[2]))} │ {' '.join(map(c, self._back[2]))} │
+{' '.join(map(c, self._right[2]))} │ {' '.join(map(c, self._back[2][::-1]))} │
 └───────┼───────┼───────┴───────┘
         │ {' '.join(map(c, self._bottom[0]))} │
         │ {' '.join(map(c, self._bottom[1]))} │
@@ -166,9 +166,25 @@ class Rubik:
                 self._back.change_col(index=2, colors=colors_top)
                 self._bottom.change_col(index=2, colors=colors_back)
             case Position.FRONT:
+                colors_top = self.get_line(face=self._top, index=2)
+                colors_right = self.get_col(face=self._right, index=0)
+                colors_bottom = self.get_line(face=self._bottom, index=0)
+                colors_left = self.get_col(face=self._left, index=2)
                 self._front.rotate()
+                self._top.change_line(index=2, colors=colors_left[::-1])
+                self._right.change_col(index=0, colors=colors_top)
+                self._bottom.change_line(index=0, colors=colors_right[::-1])
+                self._left.change_col(index=2, colors=colors_bottom)
             case Position.BACK:
+                colors_top = self.get_line(face=self._top, index=0)
+                colors_right = self.get_col(face=self._right, index=2)
+                colors_bottom = self.get_line(face=self._bottom, index=2)
+                colors_left = self.get_col(face=self._left, index=0)
                 self._back.counter_rotate()
+                self._top.change_line(index=0, colors=colors_right)
+                self._right.change_col(index=2, colors=colors_bottom[::-1])
+                self._bottom.change_line(index=2, colors=colors_left)
+                self._left.change_col(index=0, colors=colors_top[::-1])
 
     def counter_rotate(self, position: Position) -> None:
         logging.info(f'counter_rotate: {position}')
@@ -178,7 +194,7 @@ class Rubik:
                 colors_right = self.get_line(face=self._right, index=0)
                 colors_left = self.get_line(face=self._left, index=0)
                 colors_back = self.get_line(face=self._back, index=0)
-                self._bottom.rotate()
+                self._top.counter_rotate()
                 self._front.change_line(index=0, colors=colors_left)
                 self._left.change_line(index=0, colors=colors_back)
                 self._back.change_line(index=0, colors=colors_right)
@@ -188,7 +204,7 @@ class Rubik:
                 colors_right = self.get_line(face=self._right, index=2)
                 colors_left = self.get_line(face=self._left, index=2)
                 colors_back = self.get_line(face=self._back, index=2)
-                self._top.rotate()
+                self._bottom.counter_rotate()
                 self._front.change_line(index=2, colors=colors_right)
                 self._left.change_line(index=2, colors=colors_front)
                 self._back.change_line(index=2, colors=colors_left)
@@ -198,7 +214,7 @@ class Rubik:
                 colors_top = self.get_col(face=self._top, index=0)
                 colors_bottom = self.get_col(face=self._bottom, index=0)
                 colors_back = self.get_col(face=self._back, index=0)
-                self._right.rotate()
+                self._left.counter_rotate()
                 self._front.change_col(index=0, colors=colors_bottom)
                 self._top.change_col(index=0, colors=colors_front)
                 self._back.change_col(index=0, colors=colors_top)
@@ -208,15 +224,31 @@ class Rubik:
                 colors_top = self.get_col(face=self._top, index=2)
                 colors_bottom = self.get_col(face=self._bottom, index=2)
                 colors_back = self.get_col(face=self._back, index=2)
-                self._left.rotate()
+                self._right.counter_rotate()
                 self._front.change_col(index=2, colors=colors_top)
                 self._top.change_col(index=2, colors=colors_back)
                 self._back.change_col(index=2, colors=colors_bottom)
                 self._bottom.change_col(index=2, colors=colors_front)
             case Position.FRONT:
+                colors_top = self.get_line(face=self._top, index=2)
+                colors_right = self.get_col(face=self._right, index=0)
+                colors_bottom = self.get_line(face=self._bottom, index=0)
+                colors_left = self.get_col(face=self._left, index=2)
                 self._front.counter_rotate()
+                self._top.change_line(index=2, colors=colors_right)
+                self._right.change_col(index=0, colors=colors_bottom[::-1])
+                self._bottom.change_line(index=0, colors=colors_left)
+                self._left.change_col(index=2, colors=colors_top[::-1])
             case Position.BACK:
+                colors_top = self.get_line(face=self._top, index=0)
+                colors_right = self.get_col(face=self._right, index=2)
+                colors_bottom = self.get_line(face=self._bottom, index=2)
+                colors_left = self.get_col(face=self._left, index=0)
                 self._back.rotate()
+                self._top.change_line(index=0, colors=colors_left[::-1])
+                self._right.change_col(index=2, colors=colors_top)
+                self._bottom.change_line(index=2, colors=colors_right[::-1])
+                self._left.change_col(index=0, colors=colors_bottom)
 
     def double_rotate(self, position: Position) -> None:
         logging.info(f'double_rotate: {position}')

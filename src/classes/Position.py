@@ -1,6 +1,6 @@
 from enum import Enum
 
-PRIME = '\''
+PRIME = ['\'', '’']
 DOUBLE = '2'
 
 

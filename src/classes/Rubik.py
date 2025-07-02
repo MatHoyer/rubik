@@ -71,7 +71,7 @@ class Rubik:
         for instruction in instructions:
             assert 1 <= len(instruction) <= 2
             for char in instruction:
-                assert char in Position.get_positions() or char in [PRIME, DOUBLE]
+                assert char in Position.get_positions() or char in PRIME + [DOUBLE]
         for instruction in instructions:
             self.find_good_action(instruction=instruction)
 
@@ -101,7 +101,7 @@ class Rubik:
         positions = Position.get_positions()
         for _ in range(length):
             instruction = '' + random.choice(positions).value
-            instruction += random.choice([PRIME, DOUBLE, ''])
+            instruction += random.choice([PRIME[0], DOUBLE, ''])
             mix.append(instruction)
         return ' '.join(mix)
 
@@ -113,7 +113,7 @@ class Rubik:
 
         if len(instruction) == 1:
             self.rotate(position=position)
-        elif instruction[1] == PRIME:
+        elif instruction[1] in PRIME:
             self.counter_rotate(position=position)
         elif instruction[1] == DOUBLE:
             self.double_rotate(position=position)

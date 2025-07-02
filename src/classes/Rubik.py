@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from typing import List
+from typing import List, NamedTuple, Callable
 import random
 
 from .Color import Color, c
@@ -53,11 +53,11 @@ class Face:
 
 
 class Rubik:
-    _front = Face(Color.BLUE)
-    _back = Face(Color.GREEN)
+    _front = Face(Color.GREEN)
+    _back = Face(Color.BLUE)
 
-    _top = Face(Color.YELLOW)
-    _bottom = Face(Color.WHITE)
+    _top = Face(Color.WHITE)
+    _bottom = Face(Color.YELLOW)
 
     _right = Face(Color.RED)
     _left = Face(Color.ORANGE)
@@ -131,8 +131,8 @@ class Rubik:
                 self._top.rotate()
                 self._front.change_line(index=0, colors=colors_right)
                 self._left.change_line(index=0, colors=colors_front)
-                self._back.change_line(index=0, colors=colors_left)
-                self._right.change_line(index=0, colors=colors_back)
+                self._back.change_line(index=0, colors=colors_left[::-1])
+                self._right.change_line(index=0, colors=colors_back[::-1])
             case Position.BOTTOM:
                 colors_front = self._front.get_line(index=2)
                 colors_right = self._right.get_line(index=2)
@@ -140,8 +140,8 @@ class Rubik:
                 colors_back = self._back.get_line(index=2)
                 self._bottom.rotate()
                 self._front.change_line(index=2, colors=colors_left)
-                self._left.change_line(index=2, colors=colors_back)
-                self._back.change_line(index=2, colors=colors_right)
+                self._left.change_line(index=2, colors=colors_back[::-1])
+                self._back.change_line(index=2, colors=colors_right[::-1])
                 self._right.change_line(index=2, colors=colors_front)
             case Position.LEFT:
                 colors_front = self._front.get_col(index=0)
@@ -150,8 +150,8 @@ class Rubik:
                 colors_back = self._back.get_col(index=0)
                 self._left.rotate()
                 self._front.change_col(index=0, colors=colors_top)
-                self._top.change_col(index=0, colors=colors_back)
-                self._back.change_col(index=0, colors=colors_bottom)
+                self._top.change_col(index=0, colors=colors_back[::-1])
+                self._back.change_col(index=0, colors=colors_bottom[::-1])
                 self._bottom.change_col(index=0, colors=colors_front)
             case Position.RIGHT:
                 colors_front = self._front.get_col(index=2)
@@ -161,8 +161,8 @@ class Rubik:
                 self._right.rotate()
                 self._front.change_col(index=2, colors=colors_bottom)
                 self._top.change_col(index=2, colors=colors_front)
-                self._back.change_col(index=2, colors=colors_top)
-                self._bottom.change_col(index=2, colors=colors_back)
+                self._back.change_col(index=2, colors=colors_top[::-1])
+                self._bottom.change_col(index=2, colors=colors_back[::-1])
             case Position.FRONT:
                 colors_top = self._top.get_line(index=2)
                 colors_right = self._right.get_col(index=0)
@@ -194,8 +194,8 @@ class Rubik:
                 colors_back = self._back.get_line(index=0)
                 self._top.counter_rotate()
                 self._front.change_line(index=0, colors=colors_left)
-                self._left.change_line(index=0, colors=colors_back)
-                self._back.change_line(index=0, colors=colors_right)
+                self._left.change_line(index=0, colors=colors_back[::-1])
+                self._back.change_line(index=0, colors=colors_right[::-1])
                 self._right.change_line(index=0, colors=colors_front)
             case Position.BOTTOM:
                 colors_front = self._front.get_line(index=2)
@@ -205,8 +205,8 @@ class Rubik:
                 self._bottom.counter_rotate()
                 self._front.change_line(index=2, colors=colors_right)
                 self._left.change_line(index=2, colors=colors_front)
-                self._back.change_line(index=2, colors=colors_left)
-                self._right.change_line(index=2, colors=colors_back)
+                self._back.change_line(index=2, colors=colors_left[::-1])
+                self._right.change_line(index=2, colors=colors_back[::-1])
             case Position.LEFT:
                 colors_front = self._front.get_col(index=0)
                 colors_top = self._top.get_col(index=0)
@@ -215,8 +215,8 @@ class Rubik:
                 self._left.counter_rotate()
                 self._front.change_col(index=0, colors=colors_bottom)
                 self._top.change_col(index=0, colors=colors_front)
-                self._back.change_col(index=0, colors=colors_top)
-                self._bottom.change_col(index=0, colors=colors_back)
+                self._back.change_col(index=0, colors=colors_top[::-1])
+                self._bottom.change_col(index=0, colors=colors_back[::-1])
             case Position.RIGHT:
                 colors_front = self._front.get_col(index=2)
                 colors_top = self._top.get_col(index=2)
@@ -224,8 +224,8 @@ class Rubik:
                 colors_back = self._back.get_col(index=2)
                 self._right.counter_rotate()
                 self._front.change_col(index=2, colors=colors_top)
-                self._top.change_col(index=2, colors=colors_back)
-                self._back.change_col(index=2, colors=colors_bottom)
+                self._top.change_col(index=2, colors=colors_back[::-1])
+                self._back.change_col(index=2, colors=colors_bottom[::-1])
                 self._bottom.change_col(index=2, colors=colors_front)
             case Position.FRONT:
                 colors_top = self._top.get_line(index=2)

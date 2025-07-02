@@ -22,6 +22,15 @@ class Face:
 
     def get_center(self):
         return self._content[1][1]
+    
+    def get_line(self, index: int):
+        return np.copy(self._content[index])
+
+    def get_col(self, index: int):
+        col = []
+        for i in range(3):
+            col.append(self._content[i][index])
+        return np.copy(col)
 
     def change_line(self, index: int, colors: List[Color]):
         if not 0 <= index <= 2:
@@ -87,17 +96,6 @@ class Rubik:
 '''
 
     @staticmethod
-    def get_line(face: Face, index: int):
-        return np.copy(face[index])
-
-    @staticmethod
-    def get_col(face: Face, index: int):
-        col = []
-        for i in range(3):
-            col.append(face[i][index])
-        return np.copy(col)
-
-    @staticmethod
     def random_mix(length: int):
         mix = []
         positions = Position.get_positions()
@@ -126,60 +124,60 @@ class Rubik:
 
         match position:
             case Position.TOP:
-                colors_front = self.get_line(face=self._front, index=0)
-                colors_right = self.get_line(face=self._right, index=0)
-                colors_left = self.get_line(face=self._left, index=0)
-                colors_back = self.get_line(face=self._back, index=0)
+                colors_front = self._front.get_line(index=0)
+                colors_right = self._right.get_line(index=0)
+                colors_left = self._left.get_line(index=0)
+                colors_back = self._back.get_line(index=0)
                 self._top.rotate()
                 self._front.change_line(index=0, colors=colors_right)
                 self._left.change_line(index=0, colors=colors_front)
                 self._back.change_line(index=0, colors=colors_left)
                 self._right.change_line(index=0, colors=colors_back)
             case Position.BOTTOM:
-                colors_front = self.get_line(face=self._front, index=2)
-                colors_right = self.get_line(face=self._right, index=2)
-                colors_left = self.get_line(face=self._left, index=2)
-                colors_back = self.get_line(face=self._back, index=2)
+                colors_front = self._front.get_line(index=2)
+                colors_right = self._right.get_line(index=2)
+                colors_left = self._left.get_line(index=2)
+                colors_back = self._back.get_line(index=2)
                 self._bottom.rotate()
                 self._front.change_line(index=2, colors=colors_left)
                 self._left.change_line(index=2, colors=colors_back)
                 self._back.change_line(index=2, colors=colors_right)
                 self._right.change_line(index=2, colors=colors_front)
             case Position.LEFT:
-                colors_front = self.get_col(face=self._front, index=0)
-                colors_top = self.get_col(face=self._top, index=0)
-                colors_bottom = self.get_col(face=self._bottom, index=0)
-                colors_back = self.get_col(face=self._back, index=0)
+                colors_front = self._front.get_col(index=0)
+                colors_top = self._top.get_col(index=0)
+                colors_bottom = self._bottom.get_col(index=0)
+                colors_back = self._back.get_col(index=0)
                 self._left.rotate()
                 self._front.change_col(index=0, colors=colors_top)
                 self._top.change_col(index=0, colors=colors_back)
                 self._back.change_col(index=0, colors=colors_bottom)
                 self._bottom.change_col(index=0, colors=colors_front)
             case Position.RIGHT:
-                colors_front = self.get_col(face=self._front, index=2)
-                colors_top = self.get_col(face=self._top, index=2)
-                colors_bottom = self.get_col(face=self._bottom, index=2)
-                colors_back = self.get_col(face=self._back, index=2)
+                colors_front = self._front.get_col(index=2)
+                colors_top = self._top.get_col(index=2)
+                colors_bottom = self._bottom.get_col(index=2)
+                colors_back = self._back.get_col(index=2)
                 self._right.rotate()
                 self._front.change_col(index=2, colors=colors_bottom)
                 self._top.change_col(index=2, colors=colors_front)
                 self._back.change_col(index=2, colors=colors_top)
                 self._bottom.change_col(index=2, colors=colors_back)
             case Position.FRONT:
-                colors_top = self.get_line(face=self._top, index=2)
-                colors_right = self.get_col(face=self._right, index=0)
-                colors_bottom = self.get_line(face=self._bottom, index=0)
-                colors_left = self.get_col(face=self._left, index=2)
+                colors_top = self._top.get_line(index=2)
+                colors_right = self._right.get_col(index=0)
+                colors_bottom = self._bottom.get_line(index=0)
+                colors_left = self._left.get_col(index=2)
                 self._front.rotate()
                 self._top.change_line(index=2, colors=colors_left[::-1])
                 self._right.change_col(index=0, colors=colors_top)
                 self._bottom.change_line(index=0, colors=colors_right[::-1])
                 self._left.change_col(index=2, colors=colors_bottom)
             case Position.BACK:
-                colors_top = self.get_line(face=self._top, index=0)
-                colors_right = self.get_col(face=self._right, index=2)
-                colors_bottom = self.get_line(face=self._bottom, index=2)
-                colors_left = self.get_col(face=self._left, index=0)
+                colors_top = self._top.get_line(index=0)
+                colors_right = self._right.get_col(index=2)
+                colors_bottom = self._bottom.get_line(index=2)
+                colors_left = self._left.get_col(index=0)
                 self._back.counter_rotate()
                 self._top.change_line(index=0, colors=colors_right)
                 self._right.change_col(index=2, colors=colors_bottom[::-1])
@@ -190,60 +188,60 @@ class Rubik:
         logging.info(f'counter_rotate: {position}')
         match position:
             case Position.TOP:
-                colors_front = self.get_line(face=self._front, index=0)
-                colors_right = self.get_line(face=self._right, index=0)
-                colors_left = self.get_line(face=self._left, index=0)
-                colors_back = self.get_line(face=self._back, index=0)
+                colors_front = self._front.get_line(index=0)
+                colors_right = self._right.get_line(index=0)
+                colors_left = self._left.get_line(index=0)
+                colors_back = self._back.get_line(index=0)
                 self._top.counter_rotate()
                 self._front.change_line(index=0, colors=colors_left)
                 self._left.change_line(index=0, colors=colors_back)
                 self._back.change_line(index=0, colors=colors_right)
                 self._right.change_line(index=0, colors=colors_front)
             case Position.BOTTOM:
-                colors_front = self.get_line(face=self._front, index=2)
-                colors_right = self.get_line(face=self._right, index=2)
-                colors_left = self.get_line(face=self._left, index=2)
-                colors_back = self.get_line(face=self._back, index=2)
+                colors_front = self._front.get_line(index=2)
+                colors_right = self._right.get_line(index=2)
+                colors_left = self._left.get_line(index=2)
+                colors_back = self._back.get_line(index=2)
                 self._bottom.counter_rotate()
                 self._front.change_line(index=2, colors=colors_right)
                 self._left.change_line(index=2, colors=colors_front)
                 self._back.change_line(index=2, colors=colors_left)
                 self._right.change_line(index=2, colors=colors_back)
             case Position.LEFT:
-                colors_front = self.get_col(face=self._front, index=0)
-                colors_top = self.get_col(face=self._top, index=0)
-                colors_bottom = self.get_col(face=self._bottom, index=0)
-                colors_back = self.get_col(face=self._back, index=0)
+                colors_front = self._front.get_col(index=0)
+                colors_top = self._top.get_col(index=0)
+                colors_bottom = self._bottom.get_col(index=0)
+                colors_back = self._back.get_col(index=0)
                 self._left.counter_rotate()
                 self._front.change_col(index=0, colors=colors_bottom)
                 self._top.change_col(index=0, colors=colors_front)
                 self._back.change_col(index=0, colors=colors_top)
                 self._bottom.change_col(index=0, colors=colors_back)
             case Position.RIGHT:
-                colors_front = self.get_col(face=self._front, index=2)
-                colors_top = self.get_col(face=self._top, index=2)
-                colors_bottom = self.get_col(face=self._bottom, index=2)
-                colors_back = self.get_col(face=self._back, index=2)
+                colors_front = self._front.get_col(index=2)
+                colors_top = self._top.get_col(index=2)
+                colors_bottom = self._bottom.get_col(index=2)
+                colors_back = self._back.get_col(index=2)
                 self._right.counter_rotate()
                 self._front.change_col(index=2, colors=colors_top)
                 self._top.change_col(index=2, colors=colors_back)
                 self._back.change_col(index=2, colors=colors_bottom)
                 self._bottom.change_col(index=2, colors=colors_front)
             case Position.FRONT:
-                colors_top = self.get_line(face=self._top, index=2)
-                colors_right = self.get_col(face=self._right, index=0)
-                colors_bottom = self.get_line(face=self._bottom, index=0)
-                colors_left = self.get_col(face=self._left, index=2)
+                colors_top = self._top.get_line(index=2)
+                colors_right = self._right.get_col(index=0)
+                colors_bottom = self._bottom.get_line(index=0)
+                colors_left = self._left.get_col(index=2)
                 self._front.counter_rotate()
                 self._top.change_line(index=2, colors=colors_right)
                 self._right.change_col(index=0, colors=colors_bottom[::-1])
                 self._bottom.change_line(index=0, colors=colors_left)
                 self._left.change_col(index=2, colors=colors_top[::-1])
             case Position.BACK:
-                colors_top = self.get_line(face=self._top, index=0)
-                colors_right = self.get_col(face=self._right, index=2)
-                colors_bottom = self.get_line(face=self._bottom, index=2)
-                colors_left = self.get_col(face=self._left, index=0)
+                colors_top = self._top.get_line(index=0)
+                colors_right = self._right.get_col(index=2)
+                colors_bottom = self._bottom.get_line(index=2)
+                colors_left = self._left.get_col(index=0)
                 self._back.rotate()
                 self._top.change_line(index=0, colors=colors_left[::-1])
                 self._right.change_col(index=2, colors=colors_top)

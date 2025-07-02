@@ -44,3 +44,4 @@ if __name__ == "__main__":
     # cube = Rubik(mix=args.mix if args.mix else random_range)
     cube = Rubik3D(mix=args.mix if args.mix else random_range)
     print(cube)
+    cube.run()

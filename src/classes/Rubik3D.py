@@ -1,13 +1,14 @@
-from ursina import Ursina, Entity, Vec3, EditorCamera, curve, scene
+from ursina import Ursina, Entity, Vec3, EditorCamera
 from .Rubik import Rubik
-from .Color import Color, colors
+from .Color import colors
+from .InputHandler import InputHandler
 import numpy as np
 
 
 class Rubik3D(Rubik):
     def __init__(self, mix: str | int) -> None:
         super().__init__(mix)
-        self.app = Ursina(title="Rubik", size=[1000, 1000])
+        self.app = Ursina(title="Rubik", size=[1000, 1000], development_mode=False)
         self.cube = np.empty((3, 3, 3), dtype=object)
         for x in range(3):
             for y in range(3):
@@ -17,6 +18,7 @@ class Rubik3D(Rubik):
 
         Entity(model='sphere', color=colors["black"], scale=2, position=Vec3(1, -1, 1))
         self.center = Entity(model='sphere', color=colors["black"], scale=1, position=Vec3(1, -1, 1))
+        self.input_handler = InputHandler(self.cube, self.center)
         radius = .51
         for x in range(3):
             for y in range(3):
@@ -35,20 +37,6 @@ class Rubik3D(Rubik):
                         Entity(model='quad', color=colors[self._front[y][x]], scale=.7, position=Vec3(0, 0, -radius), rotation_y=0, parent=self.cube[x, y, z])
                     elif z == 2:
                         Entity(model='quad', color=colors[self._back[y][x]], scale=.7, position=Vec3(0, 0, radius), rotation_y=180, parent=self.cube[x, y, z])
-
-        # self.cube[0][0][0].world_parent = self.center
-        # self.cube[1][0][0].world_parent = self.center
-        # self.cube[2][0][0].world_parent = self.center
-
-        # self.cube[0][1][0].world_parent = self.center
-        # self.cube[1][1][0].world_parent = self.center
-        # self.cube[2][1][0].world_parent = self.center
-
-        # self.cube[0][2][0].world_parent = self.center
-        # self.cube[1][2][0].world_parent = self.center
-        # self.cube[2][2][0].world_parent = self.center
-
-        # self.center.animate("rotation_z", round(self.center.rotation_z) + 360, duration=2, curve=curve.in_out_expo)
 
         EditorCamera(position=Vec3(1, -1, 1), rotation_y=-45, rotation_x=25)
 

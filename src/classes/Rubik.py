@@ -1,10 +1,19 @@
 import numpy as np
 import logging
-from typing import List
+from typing import List, NamedTuple
 import random
 
 from .Color import Color, c
 from .Position import Position, PRIME, DOUBLE
+
+
+class Faces(NamedTuple):
+    front: np.typing.NDArray
+    back: np.typing.NDArray
+    top: np.typing.NDArray
+    bottom: np.typing.NDArray
+    right: np.typing.NDArray
+    left: np.typing.NDArray
 
 
 class Face:
@@ -104,6 +113,16 @@ class Rubik:
             instruction += random.choice([PRIME[0], DOUBLE, ''])
             mix.append(instruction)
         return ' '.join(mix)
+
+    def get_faces(self):
+        return Faces(
+            front = self._front._content,
+            back = self._back._content,
+            top = self._top._content,
+            bottom = self._bottom._content,
+            right = self._right._content,
+            left = self._left._content
+        )
 
     def find_good_action(self, instruction: str) -> None:
         '''

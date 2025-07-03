@@ -1,8 +1,6 @@
 import logging
 import argparse
 from classes.Rubik import Rubik
-from classes.Color import Color
-from classes.Position import Position
 from classes.Application import Application
 
 logging.basicConfig(
@@ -43,5 +41,6 @@ if __name__ == "__main__":
 
     rubik = Rubik(mix=args.mix if args.mix else random_range)
     print(rubik)
+    rubik.resolve()
     app = Application(rubik)
     app.run()

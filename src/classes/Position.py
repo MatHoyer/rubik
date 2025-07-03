@@ -21,11 +21,11 @@ class Position(Enum):
         positions = Position.get_positions()
         position_index = positions.index(pos)
         return positions[position_index]
-    
+
     @staticmethod
     def counter(pos: str):
         return pos + PRIME[0]
-    
+
     @staticmethod
     def double(pos: str):
         return pos + DOUBLE

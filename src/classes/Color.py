@@ -50,4 +50,4 @@ colors = {
     Color.BLUE: '#0000FF',
     Color.GREEN: '#00FF00',
     Color.BLACK: "#000000"
-    }
+}

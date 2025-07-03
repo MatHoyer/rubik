@@ -31,7 +31,7 @@ class Face:
 
     def get_face_color(self):
         return self._content[1][1]
-    
+
     # Resolve
     def is_cross(self):
         face_color = self.get_face_color()
@@ -40,7 +40,7 @@ class Face:
         mid_right = self._content[1][2]
         bottom_mid = self._content[2][1]
         return top_mid == mid_left == mid_right == bottom_mid == face_color
-    
+
     def find_color_col(self, index: int, color: Color):
         col = []
         for i in range(3):
@@ -103,8 +103,8 @@ class Rubik:
             assert 1 <= len(instruction) <= 2
             for char in instruction:
                 assert char in Position.get_positions() or char in PRIME + [DOUBLE]
-        for instruction in self.mix:
-            self.find_good_action(instruction=instruction)
+        # for instruction in self.mix:
+        #     self.find_good_action(instruction=instruction)
 
     def __str__(self):
         return f'''
@@ -148,7 +148,7 @@ class Rubik:
 
     # Resolve
     def step_cross(self):
-        if self._front.is_cross(): 
+        if self._front.is_cross():
             return
         front_color = self._front.get_face_color()
         if self._front[0][1] != front_color:

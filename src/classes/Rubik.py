@@ -29,9 +29,28 @@ class Face:
     def __setitem__(self, key, value):
         self._content[key] = value
 
-    def get_center(self):
+    def get_face_color(self):
         return self._content[1][1]
     
+    # Resolve
+    def is_cross(self):
+        face_color = self.get_face_color()
+        top_mid = self._content[0][1]
+        mid_left = self._content[1][0]
+        mid_right = self._content[1][2]
+        bottom_mid = self._content[2][1]
+        return top_mid == mid_left == mid_right == bottom_mid == face_color
+    
+    def find_color_col(self, index: int, color: Color):
+        col = []
+        for i in range(3):
+            col.append(self._content[i][index])
+        return color in col
+
+    def find_color_line(self, index: int, color: Color):
+        return color in self._content[index]
+
+    # Moves
     def get_line(self, index: int):
         return np.copy(self._content[index])
 
@@ -71,17 +90,20 @@ class Rubik:
     _right = Face(Color.RED)
     _left = Face(Color.ORANGE)
 
+    mix: List[str] = []
+    solution: List[str] = []
+
     def __init__(self, mix: str | int) -> None:
         if isinstance(mix, int):
             logging.info('Start random mix')
             mix = self.random_mix(length=mix)
             logging.info(f'Random mix is: {mix}')
-        instructions = mix.strip().split(' ')
-        for instruction in instructions:
+        self.mix = mix.strip().split(' ')
+        for instruction in self.mix:
             assert 1 <= len(instruction) <= 2
             for char in instruction:
                 assert char in Position.get_positions() or char in PRIME + [DOUBLE]
-        for instruction in instructions:
+        for instruction in self.mix:
             self.find_good_action(instruction=instruction)
 
     def __str__(self):
@@ -116,15 +138,33 @@ class Rubik:
 
     def get_faces(self):
         return Faces(
-            front = self._front._content,
-            back = self._back._content,
-            top = self._top._content,
-            bottom = self._bottom._content,
-            right = self._right._content,
-            left = self._left._content
+            front=self._front._content,
+            back=self._back._content,
+            top=self._top._content,
+            bottom=self._bottom._content,
+            right=self._right._content,
+            left=self._left._content,
         )
 
-    def find_good_action(self, instruction: str) -> None:
+    # Resolve
+    def step_cross(self):
+        if self._front.is_cross(): 
+            return
+        front_color = self._front.get_face_color()
+        if self._front[0][1] != front_color:
+            pass
+        if self._front[1][0] != front_color:
+            pass
+        if self._front[1][2] != front_color:
+            pass
+        if self._front[2][1] != front_color:
+            pass
+
+    def resolve(self):
+        self.step_cross()
+
+    # Moves
+    def find_good_action(self, instruction: str, _for_solution=False) -> None:
         '''
         Instruction is a max 2caracs string like: "U", "F2"
         '''
@@ -136,6 +176,8 @@ class Rubik:
             self.counter_rotate(position=position)
         elif instruction[1] == DOUBLE:
             self.double_rotate(position=position)
+        if _for_solution:
+            self.solution.append(position)
 
     def rotate(self, position: Position, _from_double_rotate=False) -> None:
         if not _from_double_rotate:

@@ -92,5 +92,7 @@ class Rubik3D:
             for y in range(3):
                 for z in range(3):
                     destroy(self.cube[x, y, z])
+        destroy(self.center)
+        self.center = Entity(model='sphere', color=colors["black"], scale=1, position=Vec3(1, -1, 1))
         self.set_rubik_struct()
         self.set_faces()

@@ -103,7 +103,7 @@ class Rubik:
             assert 1 <= len(instruction) <= 2
             assert instruction[0] in Position.get_positions()
             if len(instruction) == 2:
-                assert instruction[1] in PRIME + [DOUBLE]
+                assert instruction[1] in [*PRIME, DOUBLE]
         # for instruction in self.mix:
         #     self.find_good_action(instruction=instruction)
 

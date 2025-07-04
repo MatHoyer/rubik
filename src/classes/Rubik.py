@@ -101,8 +101,9 @@ class Rubik:
         self.mix = mix.strip().split(' ')
         for instruction in self.mix:
             assert 1 <= len(instruction) <= 2
-            for char in instruction:
-                assert char in Position.get_positions() or char in PRIME + [DOUBLE]
+            assert instruction[0] in Position.get_positions()
+            if len(instruction) == 2:
+                assert instruction[1] in PRIME + [DOUBLE]
         # for instruction in self.mix:
         #     self.find_good_action(instruction=instruction)
 

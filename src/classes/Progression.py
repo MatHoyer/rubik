@@ -1,9 +1,9 @@
 from ursina import Entity, Text, color, camera, invoke
+from .globals import ANIMATION_TIME
 
 
 class Progression():
     step = 0
-    time = 1
     height = .05
     width = .65
 
@@ -48,7 +48,7 @@ class Progression():
         self.step += 1
         if self.step == 1 or self.step == 2:
             for i in range(mixLen):
-                invoke(self.inc, self.width / 2 / mixLen, delay=i * self.time)
+                invoke(self.inc, self.width / 2 / mixLen, delay=i * ANIMATION_TIME)
 
     def inc(self, a):
         self.progress_bar.scale_x += a

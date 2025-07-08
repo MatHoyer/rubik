@@ -2,10 +2,10 @@ from ursina import Entity, application, invoke, curve, held_keys
 from typing import List
 from .Rubik3D import Rubik3D
 from .Position import PRIME, DOUBLE
+from .globals import ANIMATION_TIME
 
 
 class InputHandler(Entity):
-    time = .1
     is_input = False
     is_mix = False
 
@@ -54,13 +54,13 @@ class InputHandler(Entity):
             if len(mix[i]) == 2:
                 reverse = True if mix[i][1] in PRIME else False
                 double = True if mix[i][1] is DOUBLE else False
-            invoke(func, reverse, double, delay=i * self.time)
-        invoke(lambda: setattr(self, "is_mix", False), delay=len(mix) * self.time)
+            invoke(func, reverse, double, delay=i * ANIMATION_TIME)
+        invoke(lambda: setattr(self, "is_mix", False), delay=len(mix) * ANIMATION_TIME)
 
     def do_rotate(self, type, value):
-        self.rubik3D.center.animate(type, value, duration=self.time, curve=curve.in_out_expo)
-        invoke(self.rubik3D.clear_rubik, delay=self.time)
-        invoke(lambda: setattr(self, "is_input", False), delay=self.time)
+        self.rubik3D.center.animate(type, value, duration=ANIMATION_TIME, curve=curve.in_out_expo)
+        invoke(self.rubik3D.clear_rubik, delay=ANIMATION_TIME)
+        invoke(lambda: setattr(self, "is_input", False), delay=ANIMATION_TIME)
 
     def do_front(self, reverse, double=False):
         self.is_input = True

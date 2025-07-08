@@ -5,7 +5,7 @@ from .Position import PRIME, DOUBLE
 
 
 class InputHandler(Entity):
-    time = 1
+    time = .1
     is_input = False
     is_mix = False
 
@@ -55,7 +55,7 @@ class InputHandler(Entity):
                 reverse = True if mix[i][1] in PRIME else False
                 double = True if mix[i][1] is DOUBLE else False
             invoke(func, reverse, double, delay=i * self.time)
-        invoke(lambda: setattr(self, "is_mix", False), delay=len(mix))
+        invoke(lambda: setattr(self, "is_mix", False), delay=len(mix) * self.time)
 
     def do_rotate(self, type, value):
         self.rubik3D.center.animate(type, value, duration=self.time, curve=curve.in_out_expo)

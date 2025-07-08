@@ -1,6 +1,7 @@
 from ursina import Entity, Vec3, EditorCamera, destroy
 from .Rubik import Rubik
 from .Color import colors
+from .Progression import Progression
 import numpy as np
 
 
@@ -14,6 +15,7 @@ class Rubik3D:
         self.radius = .51
         self.faces = []
         self.set_faces()
+        self.progression = Progression()
         EditorCamera(position=Vec3(1, -1, 1), rotation_y=-45, rotation_x=25)
 
     def set_rubik_struct(self):

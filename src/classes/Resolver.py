@@ -9,19 +9,21 @@ if TYPE_CHECKING:
 class Resolver:
     def __init__(self, rubik: "Rubik"):
         self.rubik = rubik
-        logging.info('START RESOLVER')
+        logging.info('STEP 1')
         self.top_cross()
+        logging.info('STEP 2')
+        self.top_corners()
 
     def top_cross(self):
         order = [self.rubik.front[1, 1], self.rubik.right[1, 1], self.rubik.back[1, 1], self.rubik.left[1, 1]]
         for i in range(len(order)):
-            self.search_edges([self.rubik.top[1, 1], order[i]])
+            self.search_edges_for_top_cross([self.rubik.top[1, 1], order[i]])
             if self.rubik.front[0, 1] != order[i]:
                 self.sliding_door()
             self.rubik.rotate(Position.TOP)
-        pass
+            self.rubik.solution.extend(["U"])
 
-    def search_edges(self, colors: list[str]):
+    def search_edges_for_top_cross(self, colors: list[str]):
         if self.rubik.top[2, 1] in colors and self.rubik.front[0, 1] in colors:
             return
         elif self.rubik.top[1, 2] in colors and self.rubik.right[0, 1] in colors:
@@ -81,6 +83,88 @@ class Resolver:
         self.rubik.counter_rotate(Position.LEFT)
         self.rubik.counter_rotate(Position.TOP)
         self.rubik.solution.extend(["F'", "U", "L'", "U'"])
+
+    def top_corners(self):
+        order = [self.rubik.front[1, 1], self.rubik.right[1, 1], self.rubik.back[1, 1], self.rubik.left[1, 1]]
+        for i in range(len(order)):
+            self.search_corner_for_top([self.rubik.top[1, 1], order[i], order[i - 1]])
+            self.good_orientation_for_corner([self.rubik.top[1, 1], order[i], order[i - 1]])
+            self.rubik.rotate(Position.TOP)
+            self.rubik.solution.extend(["U"])
+
+    def search_corner_for_top(self, colors: list[str]):
+        if self.rubik.top[2, 0] in colors and self.rubik.front[0, 0] in colors and self.rubik.left[0, 2] in colors:
+            return
+        elif self.rubik.top[2, 2] in colors and self.rubik.front[0, 2] in colors and self.rubik.right[0, 0] in colors:
+            self.rubik.rotate(Position.LEFT)
+            self.rubik.counter_rotate(Position.RIGHT)
+            self.rubik.counter_rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.rotate(Position.RIGHT)
+            self.rubik.solution.extend(["L", "R'", "D'", "L'", "R"])
+        elif self.rubik.top[0, 0] in colors and self.rubik.back[0, 0] in colors and self.rubik.left[0, 0] in colors:
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.double_rotate(Position.BOTTOM)
+            self.rubik.double_rotate(Position.LEFT)
+            self.rubik.counter_rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.solution.extend(["L'", "D2", "L2", "D'", "L'"])
+        elif self.rubik.top[0, 2] in colors and self.rubik.back[0, 2] in colors and self.rubik.right[0, 2] in colors:
+            self.rubik.rotate(Position.LEFT)
+            self.rubik.rotate(Position.RIGHT)
+            self.rubik.double_rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.counter_rotate(Position.RIGHT)
+            self.rubik.solution.extend(["L", "R", "D2", "L'", "R'"])
+        elif self.rubik.bottom[0, 0] in colors and self.rubik.front[2, 0] in colors and self.rubik.left[2, 2] in colors:
+            self.rubik.rotate(Position.BOTTOM)
+            self.rubik.rotate(Position.LEFT)
+            self.rubik.counter_rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.solution.extend(["D", "L", "D'", "L'"])
+        elif self.rubik.bottom[0, 2] in colors and self.rubik.front[2, 2] in colors and \
+                self.rubik.right[2, 0] in colors:
+            self.rubik.rotate(Position.LEFT)
+            self.rubik.counter_rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.solution.extend(["L", "D'", "L'"])
+        elif self.rubik.bottom[2, 2] in colors and self.rubik.back[2, 2] in colors and self.rubik.right[2, 2] in colors:
+            self.rubik.rotate(Position.LEFT)
+            self.rubik.double_rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.solution.extend(["L", "D2", "L'"])
+        elif self.rubik.bottom[2, 0] in colors and self.rubik.back[2, 0] in colors and self.rubik.left[2, 0] in colors:
+            self.rubik.counter_rotate(Position.BOTTOM)
+            self.rubik.rotate(Position.LEFT)
+            self.rubik.double_rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.solution.extend(["D'", "L", "D2", "L'"])
+        else:
+            raise "PROBLEM TOP CORNER"
+
+    def good_orientation_for_corner(self, colors):
+        if self.rubik.top[2, 0] == colors[0]:
+            return
+        elif self.rubik.top[2, 0] == colors[1]:
+            self.rubik.rotate(Position.LEFT)
+            self.rubik.rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.counter_rotate(Position.BOTTOM)
+            self.rubik.rotate(Position.LEFT)
+            self.rubik.rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.LEFT)
+            self.rubik.counter_rotate(Position.BOTTOM)
+            self.rubik.solution.extend(["L", "D", "L'", "D'", "L", "D", "L'", "D'"])
+        else:
+            self.rubik.counter_rotate(Position.FRONT)
+            self.rubik.counter_rotate(Position.BOTTOM)
+            self.rubik.rotate(Position.FRONT)
+            self.rubik.rotate(Position.BOTTOM)
+            self.rubik.counter_rotate(Position.FRONT)
+            self.rubik.counter_rotate(Position.BOTTOM)
+            self.rubik.rotate(Position.FRONT)
+            self.rubik.rotate(Position.BOTTOM)
+            self.rubik.solution.extend(["F'", "D'", "F", "D", "F'", "D'", "F", "D"])
 
     def belgian_story(self, left=False):
         if left:

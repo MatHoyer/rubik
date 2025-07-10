@@ -5,7 +5,6 @@ import random
 
 from .Color import Color, c
 from .Position import Position, PRIME, DOUBLE
-from .Resolver import Resolver
 
 
 class Faces(NamedTuple):
@@ -107,7 +106,6 @@ class Rubik:
                 assert instruction[1] in [*PRIME, DOUBLE]
         for instruction in self.mix:
             self.find_good_action(instruction=instruction)
-        self.resolver = Resolver(self)
 
     def __str__(self):
         return f'''

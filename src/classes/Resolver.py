@@ -1,13 +1,10 @@
-from typing import TYPE_CHECKING
 import logging
 from .Position import Position
-
-if TYPE_CHECKING:
-    from .Rubik import Rubik
+from .Rubik import Rubik
 
 
 class Resolver:
-    def __init__(self, rubik: "Rubik"):
+    def __init__(self, rubik: Rubik):
         self.rubik = rubik
         logging.info('STEP 1')
         self.top_cross()

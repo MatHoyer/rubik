@@ -2,6 +2,7 @@ import logging
 import argparse
 from classes.Rubik import Rubik
 from classes.Application import Application
+from classes.Resolver import Resolver
 
 logging.basicConfig(
     level=logging.INFO,
@@ -41,6 +42,6 @@ if __name__ == "__main__":
 
     rubik = Rubik(mix=args.mix if args.mix else random_range)
     print(rubik)
-    rubik.resolve()
+    Resolver(rubik)
     app = Application(rubik)
     app.run()

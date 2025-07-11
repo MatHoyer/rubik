@@ -28,9 +28,9 @@ class InputHandler(Entity):
                 case "b":
                     self.do_back(held_keys["shift"])
                 case "u":
-                    self.do_top(held_keys["shift"])
+                    self.do_up(held_keys["shift"])
                 case "d":
-                    self.do_bottom(held_keys["shift"])
+                    self.do_down(held_keys["shift"])
                 case "l":
                     self.do_left(held_keys["shift"])
                 case "r":
@@ -42,19 +42,19 @@ class InputHandler(Entity):
         func_dict = {
             "F": self.do_front,
             "B": self.do_back,
-            "U": self.do_top,
-            "D": self.do_bottom,
+            "U": self.do_up,
+            "D": self.do_down,
             "L": self.do_left,
             "R": self.do_right,
         }
         for i in range(len(mix)):
             func = func_dict[mix[i][0]]
-            reverse = False
+            counter = False
             double = False
             if len(mix[i]) == 2:
-                reverse = True if mix[i][1] in PRIME else False
+                counter = True if mix[i][1] in PRIME else False
                 double = True if mix[i][1] is DOUBLE else False
-            invoke(func, reverse, double, delay=i * ANIMATION_TIME)
+            invoke(func, counter, double, delay=i * ANIMATION_TIME)
         invoke(lambda: setattr(self, "is_mix", False), delay=len(mix) * ANIMATION_TIME)
 
     def do_rotate(self, type, value):
@@ -62,62 +62,62 @@ class InputHandler(Entity):
         invoke(self.rubik3D.clear_rubik, delay=ANIMATION_TIME)
         invoke(lambda: setattr(self, "is_input", False), delay=ANIMATION_TIME)
 
-    def do_front(self, reverse, double=False):
+    def do_front(self, counter, double=False):
         self.is_input = True
         z = 0
         for y in range(3):
             for x in range(3):
                 self.rubik3D.cube[x, y, z].world_parent = self.rubik3D.center
-        self.rubik3D.rubik.find_good_action(("F" if not reverse else "F\'") if not double else "F2")
+        self.rubik3D.rubik.find_good_action(("F" if not counter else "F\'") if not double else "F2")
         self.do_rotate("rotation_z", round(self.rubik3D.center.rotation_z) +
-                       ((-90 if reverse else 90) * (2 if double else 1)))
+                       ((-90 if counter else 90) * (2 if double else 1)))
 
-    def do_back(self, reverse, double=False):
+    def do_back(self, counter, double=False):
         self.is_input = True
         z = 2
         for y in range(3):
             for x in range(3):
                 self.rubik3D.cube[x, y, z].world_parent = self.rubik3D.center
-        self.rubik3D.rubik.find_good_action(("B" if not reverse else "B\'") if not double else "B2")
+        self.rubik3D.rubik.find_good_action(("B" if not counter else "B\'") if not double else "B2")
         self.do_rotate("rotation_z", round(self.rubik3D.center.rotation_z) +
-                       ((90 if reverse else -90) * (2 if double else 1)))
+                       ((90 if counter else -90) * (2 if double else 1)))
 
-    def do_top(self, reverse, double=False):
+    def do_up(self, counter, double=False):
         self.is_input = True
         y = 0
         for x in range(3):
             for z in range(3):
                 self.rubik3D.cube[x, y, z].world_parent = self.rubik3D.center
-        self.rubik3D.rubik.find_good_action(("U" if not reverse else "U\'") if not double else "U2")
+        self.rubik3D.rubik.find_good_action(("U" if not counter else "U\'") if not double else "U2")
         self.do_rotate("rotation_y", round(self.rubik3D.center.rotation_y) +
-                       ((-90 if reverse else 90) * (2 if double else 1)))
+                       ((-90 if counter else 90) * (2 if double else 1)))
 
-    def do_bottom(self, reverse, double=False):
+    def do_down(self, counter, double=False):
         self.is_input = True
         y = 2
         for x in range(3):
             for z in range(3):
                 self.rubik3D.cube[x, y, z].world_parent = self.rubik3D.center
-        self.rubik3D.rubik.find_good_action(("D" if not reverse else "D\'") if not double else "D2")
+        self.rubik3D.rubik.find_good_action(("D" if not counter else "D\'") if not double else "D2")
         self.do_rotate("rotation_y", round(self.rubik3D.center.rotation_y) +
-                       ((90 if reverse else -90) * (2 if double else 1)))
+                       ((90 if counter else -90) * (2 if double else 1)))
 
-    def do_left(self, reverse, double=False):
+    def do_left(self, counter, double=False):
         self.is_input = True
         x = 0
         for z in range(3):
             for y in range(3):
                 self.rubik3D.cube[x, y, z].world_parent = self.rubik3D.center
-        self.rubik3D.rubik.find_good_action(("L" if not reverse else "L\'") if not double else "L2")
+        self.rubik3D.rubik.find_good_action(("L" if not counter else "L\'") if not double else "L2")
         self.do_rotate("rotation_x", round(self.rubik3D.center.rotation_x) +
-                       ((90 if reverse else -90) * (2 if double else 1)))
+                       ((90 if counter else -90) * (2 if double else 1)))
 
-    def do_right(self, reverse, double=False):
+    def do_right(self, counter, double=False):
         self.is_input = True
         x = 2
         for z in range(3):
             for y in range(3):
                 self.rubik3D.cube[x, y, z].world_parent = self.rubik3D.center
-        self.rubik3D.rubik.find_good_action(("R" if not reverse else "R\'") if not double else "R2")
+        self.rubik3D.rubik.find_good_action(("R" if not counter else "R\'") if not double else "R2")
         self.do_rotate("rotation_x", round(self.rubik3D.center.rotation_x) +
-                       ((-90 if reverse else 90) * (2 if double else 1)))
+                       ((-90 if counter else 90) * (2 if double else 1)))

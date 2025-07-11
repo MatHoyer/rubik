@@ -1,5 +1,5 @@
 import logging
-from .Position import Position
+from .Position import Position, PRIME , DOUBLE
 from .Rubik import Rubik
 
 
@@ -7,103 +7,213 @@ class Resolver:
     def __init__(self, rubik: Rubik):
         self.rubik = rubik
         logging.info('STEP 1')
-        self.top_cross()
+        self.up_cross()
         logging.info('STEP 2')
-        self.top_corners()
+        self.up_corners()
 
-    def top_cross(self):
+    def up_cross(self):
         order = [self.rubik.front[1, 1], self.rubik.right[1, 1], self.rubik.back[1, 1], self.rubik.left[1, 1]]
         for i in range(len(order)):
-            self.search_edges_for_top_cross([self.rubik.top[1, 1], order[i]])
+            self.search_edges_for_up_cross([self.rubik.up[1, 1], order[i]])
             if self.rubik.front[0, 1] != order[i]:
-                self.do_moves(["F'", "U", "L'", "U'"])
-            self.do_moves(["U"])
+                self.do_moves([
+                    Position.FRONT.counter_clockwise(),
+                    Position.UP.clockwise(),
+                    Position.LEFT.counter_clockwise(),
+                    Position.UP.counter_clockwise(),
+                ])
+            self.do_moves([
+                Position.UP.clockwise(),
+            ])
 
-    def search_edges_for_top_cross(self, colors: list[str]):
-        if self.rubik.top[2, 1] in colors and self.rubik.front[0, 1] in colors:
+    def search_edges_for_up_cross(self, colors: list[str]):
+        if self.rubik.up[2, 1] in colors and self.rubik.front[0, 1] in colors:
             return
-        elif self.rubik.top[1, 2] in colors and self.rubik.right[0, 1] in colors:
-            self.do_moves(["R2", "D'", "F2"])
-        elif self.rubik.top[1, 0] in colors and self.rubik.left[0, 1] in colors:
-            self.do_moves(["L2", "D", "F2"])
-        elif self.rubik.top[0, 1] in colors and self.rubik.back[0, 1] in colors:
-            self.do_moves(["B2", "D2", "F2"])
-        elif self.rubik.bottom[0, 1] in colors and self.rubik.front[2, 1] in colors:
-            self.do_moves(["F2"])
-        elif self.rubik.bottom[1, 2] in colors and self.rubik.right[2, 1] in colors:
-            self.do_moves(["D'", "F2"])
-        elif self.rubik.bottom[1, 0] in colors and self.rubik.left[2, 1] in colors:
-            self.do_moves(["D", "F2"])
-        elif self.rubik.bottom[2, 1] in colors and self.rubik.back[2, 1] in colors:
-            self.do_moves(["D2", "F2"])
+        elif self.rubik.up[1, 2] in colors and self.rubik.right[0, 1] in colors:
+            self.do_moves([
+                Position.RIGHT.double_clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.FRONT.double_clockwise(),
+            ])
+        elif self.rubik.up[1, 0] in colors and self.rubik.left[0, 1] in colors:
+            self.do_moves([
+                  Position.LEFT.double_clockwise(),
+                  Position.DOWN.clockwise(),
+                  Position.FRONT.double_clockwise(),
+            ])
+        elif self.rubik.up[0, 1] in colors and self.rubik.back[0, 1] in colors:
+            self.do_moves([
+                Position.BACK.double_clockwise(),
+                Position.DOWN.double_clockwise(),
+                Position.FRONT.double_clockwise(),
+            ])
+        elif self.rubik.down[0, 1] in colors and self.rubik.front[2, 1] in colors:
+            self.do_moves([
+                Position.FRONT.double_clockwise(),
+            ])
+        elif self.rubik.down[1, 2] in colors and self.rubik.right[2, 1] in colors:
+            self.do_moves([
+                Position.DOWN.counter_clockwise(),
+                Position.FRONT.double_clockwise(),
+            ])
+        elif self.rubik.down[1, 0] in colors and self.rubik.left[2, 1] in colors:
+            self.do_moves([
+                Position.DOWN.clockwise(),
+                Position.FRONT.double_clockwise(),
+            ])
+        elif self.rubik.down[2, 1] in colors and self.rubik.back[2, 1] in colors:
+            self.do_moves([
+                Position.DOWN.double_clockwise(),
+                Position.FRONT.double_clockwise(),
+            ])
         elif self.rubik.front[1, 0] in colors and self.rubik.left[1, 2] in colors:
-            self.do_moves(["F"])
+            self.do_moves([
+                Position.FRONT.clockwise(),
+            ])
         elif self.rubik.front[1, 2] in colors and self.rubik.right[1, 0] in colors:
-            self.do_moves(["F'"])
+            self.do_moves([
+                Position.FRONT.counter_clockwise(),
+            ])
         elif self.rubik.back[1, 2] in colors and self.rubik.right[1, 2] in colors:
-            self.do_moves(["B'", "D2", "B", "F2"])
+            self.do_moves([
+                Position.BACK.counter_clockwise(),
+                Position.DOWN.double_clockwise(),
+                Position.BACK.clockwise(),
+                Position.FRONT.double_clockwise(),
+            ])
         elif self.rubik.back[1, 0] in colors and self.rubik.left[1, 0] in colors:
-            self.do_moves(["B", "D2", "B'", "F2"])
+            self.do_moves([
+                Position.BACK.clockwise(),
+                Position.DOWN.double_clockwise(),
+                Position.BACK.counter_clockwise(),
+                Position.FRONT.double_clockwise(),
+            ])
         else:
-            raise "PROBLEM TOP CROSS"
+            raise "PROBLEM UP CROSS"
 
-    def top_corners(self):
+    def up_corners(self):
         order = [self.rubik.front[1, 1], self.rubik.right[1, 1], self.rubik.back[1, 1], self.rubik.left[1, 1]]
         for i in range(len(order)):
-            self.search_corner_for_top([self.rubik.top[1, 1], order[i], order[i - 1]])
-            self.good_orientation_for_corner([self.rubik.top[1, 1], order[i], order[i - 1]])
-            self.do_moves(["U"])
+            self.search_corner_for_up([self.rubik.up[1, 1], order[i], order[i - 1]])
+            self.good_orientation_for_corner([self.rubik.up[1, 1], order[i], order[i - 1]])
+            self.do_moves([
+                Position.UP.clockwise(),
+            ])
 
-    def search_corner_for_top(self, colors: list[str]):
-        if self.rubik.top[2, 0] in colors and self.rubik.front[0, 0] in colors and self.rubik.left[0, 2] in colors:
+    def search_corner_for_up(self, colors: list[str]):
+        if self.rubik.up[2, 0] in colors and self.rubik.front[0, 0] in colors and self.rubik.left[0, 2] in colors:
             return
-        elif self.rubik.top[2, 2] in colors and self.rubik.front[0, 2] in colors and self.rubik.right[0, 0] in colors:
-            self.do_moves(["L", "R'", "D'", "L'", "R"])
-        elif self.rubik.top[0, 0] in colors and self.rubik.back[0, 0] in colors and self.rubik.left[0, 0] in colors:
-            self.do_moves(["L'", "D2", "L2", "D'", "L'"])
-        elif self.rubik.top[0, 2] in colors and self.rubik.back[0, 2] in colors and self.rubik.right[0, 2] in colors:
-            self.do_moves(["L", "R", "D2", "L'", "R'"])
-        elif self.rubik.bottom[0, 0] in colors and self.rubik.front[2, 0] in colors and self.rubik.left[2, 2] in colors:
-            self.do_moves(["D", "L", "D'", "L'"])
-        elif self.rubik.bottom[0, 2] in colors and self.rubik.front[2, 2] in colors and \
+        elif self.rubik.up[2, 2] in colors and self.rubik.front[0, 2] in colors and self.rubik.right[0, 0] in colors:
+            self.do_moves([
+                Position.LEFT.clockwise(),
+                Position.RIGHT.counter_clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.LEFT.counter_clockwise(),
+                Position.RIGHT.clockwise(),
+            ])
+        elif self.rubik.up[0, 0] in colors and self.rubik.back[0, 0] in colors and self.rubik.left[0, 0] in colors:
+            self.do_moves([
+                Position.LEFT.counter_clockwise(),
+                Position.DOWN.double_clockwise(),
+                Position.LEFT.double_clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.LEFT.counter_clockwise(),
+            ])
+        elif self.rubik.up[0, 2] in colors and self.rubik.back[0, 2] in colors and self.rubik.right[0, 2] in colors:
+            self.do_moves([
+                Position.LEFT.clockwise(),
+                Position.RIGHT.clockwise(),
+                Position.DOWN.double_clockwise(),
+                Position.LEFT.counter_clockwise(),
+                Position.RIGHT.counter_clockwise(),
+            ])
+        elif self.rubik.down[0, 0] in colors and self.rubik.front[2, 0] in colors and self.rubik.left[2, 2] in colors:
+            self.do_moves([
+                Position.DOWN.clockwise(),
+                Position.LEFT.clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.LEFT.counter_clockwise(),
+            ])
+        elif self.rubik.down[0, 2] in colors and self.rubik.front[2, 2] in colors and \
                 self.rubik.right[2, 0] in colors:
-            self.do_moves(["L", "D'", "L'"])
-        elif self.rubik.bottom[2, 2] in colors and self.rubik.back[2, 2] in colors and self.rubik.right[2, 2] in colors:
-            self.do_moves(["L", "D2", "L'"])
-        elif self.rubik.bottom[2, 0] in colors and self.rubik.back[2, 0] in colors and self.rubik.left[2, 0] in colors:
-            self.do_moves(["D'", "L", "D2", "L'"])
+            self.do_moves([
+                Position.LEFT.clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.LEFT.counter_clockwise(),
+            ])
+        elif self.rubik.down[2, 2] in colors and self.rubik.back[2, 2] in colors and self.rubik.right[2, 2] in colors:
+            self.do_moves([
+                Position.LEFT.clockwise(),
+                Position.DOWN.double_clockwise(),
+                Position.LEFT.counter_clockwise(),
+            ])
+        elif self.rubik.down[2, 0] in colors and self.rubik.back[2, 0] in colors and self.rubik.left[2, 0] in colors:
+            self.do_moves([
+                Position.DOWN.counter_clockwise(),
+                Position.LEFT.clockwise(),
+                Position.DOWN.double_clockwise(),
+                Position.LEFT.counter_clockwise(),
+            ])
         else:
-            raise "PROBLEM TOP CORNER"
+            raise "PROBLEM UP CORNER"
 
     def good_orientation_for_corner(self, colors):
-        if self.rubik.top[2, 0] == colors[0]:
+        if self.rubik.up[2, 0] == colors[0]:
             return
-        elif self.rubik.top[2, 0] == colors[1]:
-            self.do_moves(["L", "D", "L'", "D'", "L", "D", "L'", "D'"])
+        elif self.rubik.up[2, 0] == colors[1]:
+            self.do_moves([
+                Position.LEFT.clockwise(),
+                Position.DOWN.clockwise(),
+                Position.LEFT.counter_clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.LEFT.clockwise(),
+                Position.DOWN.clockwise(),
+                Position.LEFT.counter_clockwise(),
+                Position.DOWN.counter_clockwise(),
+            ])
         else:
-            self.do_moves(["F'", "D'", "F", "D", "F'", "D'", "F", "D"])
+            self.do_moves([
+                Position.FRONT.counter_clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.FRONT.clockwise(),
+                Position.DOWN.clockwise(),
+                Position.FRONT.counter_clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.FRONT.clockwise(),
+                Position.DOWN.clockwise(),
+            ])
 
     def belgian_story(self, left=False):
         if left:
-            self.do_moves(["D", "L'", "D'", "L", "D'", "F'", "D", "F"])
+            self.do_moves([
+                Position.DOWN.clockwise(),
+                Position.LEFT.counter_clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.LEFT.clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.FRONT.counter_clockwise(),
+                Position.DOWN.clockwise(),
+                Position.FRONT.clockwise(),
+            ])
         else:
-            self.do_moves(["D'", "R'", "D", "R", "D", "F", "D'", "F'"])
+            self.do_moves([
+                Position.DOWN.counter_clockwise(),
+                Position.RIGHT.counter_clockwise(),
+                Position.DOWN.clockwise(),
+                Position.RIGHT.clockwise(),
+                Position.DOWN.clockwise(),
+                Position.FRONT.clockwise(),
+                Position.DOWN.counter_clockwise(),
+                Position.FRONT.counter_clockwise(),
+            ])
 
     def do_moves(self, moves: list[str]):
         for move in moves:
-            position_dict = {
-                "F": Position.FRONT,
-                "B": Position.BACK,
-                "U": Position.TOP,
-                "D": Position.BOTTOM,
-                "L": Position.LEFT,
-                "R": Position.RIGHT,
-            }
             modifier = move[1] if len(move) == 2 else ""
-            if modifier == "'":
-                self.rubik.counter_rotate(position_dict[move[0]])
-            elif modifier == "2":
-                self.rubik.double_rotate(position_dict[move[0]])
+            if modifier in PRIME:
+                self.rubik.counter_clockwise_rotate(Position.get_good_position(move[0]))
+            elif modifier is DOUBLE:
+                self.rubik.double_clockwise_rotate(Position.get_good_position(move[0]))
             else:
-                self.rubik.rotate(position_dict[move[0]])
+                self.rubik.clockwise_rotate(Position.get_good_position(move[0]))
         self.rubik.solution.extend(moves)

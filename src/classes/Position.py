@@ -5,8 +5,8 @@ DOUBLE = '2'
 
 
 class Position(Enum):
-    TOP = 'U'
-    BOTTOM = 'D'
+    UP = 'U'
+    DOWN = 'D'
     RIGHT = 'R'
     LEFT = 'L'
     FRONT = 'F'
@@ -22,13 +22,14 @@ class Position(Enum):
         position_index = positions.index(pos)
         return positions[position_index]
 
-    @staticmethod
-    def counter(pos: str):
-        return pos + PRIME[0]
+    def clockwise(self):
+        return self.value
 
-    @staticmethod
-    def double(pos: str):
-        return pos + DOUBLE
+    def counter_clockwise(self):
+        return self.value + PRIME[0]
+
+    def double_clockwise(self):
+        return self.value + DOUBLE
 
     def __str__(self):
         return self.value

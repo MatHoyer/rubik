@@ -53,7 +53,7 @@ class Rubik3D:
                         t = {0: 2, 1: 1, 2: 0}[z]
                         self.faces.append(Entity(
                             model='quad',
-                            color=colors[faces.top[t][x]],
+                            color=colors[faces.up[t][x]],
                             scale=.7,
                             position=Vec3(0, self.radius, 0),
                             rotation_x=90,
@@ -62,7 +62,7 @@ class Rubik3D:
                     elif y == 2:
                         self.faces.append(Entity(
                             model='quad',
-                            color=colors[faces.bottom[z][x]],
+                            color=colors[faces.down[z][x]],
                             scale=.7,
                             position=Vec3(0, -self.radius, 0),
                             rotation_x=-90,

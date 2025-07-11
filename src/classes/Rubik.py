@@ -3,27 +3,27 @@ import logging
 from typing import List, NamedTuple
 import random
 
-from .Color import Color, c
+from .Color import Color, get_colors as Colors
 from .Position import Position, PRIME, DOUBLE
 
 
 class Faces(NamedTuple):
-    front: np.typing.NDArray
-    back: np.typing.NDArray
-    up: np.typing.NDArray
-    down: np.typing.NDArray
-    right: np.typing.NDArray
-    left: np.typing.NDArray
+    front: List[List[Color]]
+    back: List[List[Color]]
+    up: List[List[Color]]
+    down: List[List[Color]]
+    right: List[List[Color]]
+    left: List[List[Color]]
 
 
 class Face:
     def __init__(self, color: Color) -> None:
-        self._content = np.full((3, 3), color, dtype=str)
+        self._content = [[color for _ in range(3)] for _ in range(3)]
 
     def __str__(self):
         return str(self._content)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> List[Color]:
         return self._content[key]
 
     # Moves
@@ -57,14 +57,14 @@ class Face:
 
 
 class Rubik:
-    front = Face(Color.GREEN)
-    back = Face(Color.BLUE)
+    front = Face(Colors().GREEN)
+    back = Face(Colors().BLUE)
 
-    up = Face(Color.WHITE)
-    down = Face(Color.YELLOW)
+    up = Face(Colors().WHITE)
+    down = Face(Colors().YELLOW)
 
-    right = Face(Color.RED)
-    left = Face(Color.ORANGE)
+    right = Face(Colors().RED)
+    left = Face(Colors().ORANGE)
 
     mix: List[str] = []
     solution: List[str] = []
@@ -84,24 +84,24 @@ class Rubik:
             self.find_good_action(instruction=instruction)
 
     def __str__(self):
-        return f'''
+        return f"""
         ┌───────┐
-        │ {' '.join(map(c, self.up[0]))} │
-        │ {' '.join(map(c, self.up[1]))} │
-        │ {' '.join(map(c, self.up[2]))} │
+        │ {" ".join([color.print for color in self.up[0]])} │
+        │ {" ".join([color.print for color in self.up[1]])} │
+        │ {" ".join([color.print for color in self.up[2]])} │
 ┌───────┼───────┼───────┬───────┐
-│ {' '.join(map(c, self.left[0]))} │ {' '.join(map(c, self.front[0]))} │ \
-{' '.join(map(c, self.right[0]))} │ {' '.join(map(c, self.back[0][::-1]))} │
-│ {' '.join(map(c, self.left[1]))} │ {' '.join(map(c, self.front[1]))} │ \
-{' '.join(map(c, self.right[1]))} │ {' '.join(map(c, self.back[1][::-1]))} │
-│ {' '.join(map(c, self.left[2]))} │ {' '.join(map(c, self.front[2]))} │ \
-{' '.join(map(c, self.right[2]))} │ {' '.join(map(c, self.back[2][::-1]))} │
+│ {" ".join([color.print for color in self.left[0]])} │ {" ".join([color.print for color in self.front[0]])} │ \
+{" ".join([color.print for color in self.right[0]])} │ {" ".join([color.print for color in self.back[0][::-1]])} │
+│ {" ".join([color.print for color in self.left[1]])} │ {" ".join([color.print for color in self.front[1]])} │ \
+{" ".join([color.print for color in self.right[1]])} │ {" ".join([color.print for color in self.back[1][::-1]])} │
+│ {" ".join([color.print for color in self.left[2]])} │ {" ".join([color.print for color in self.front[2]])} │ \
+{" ".join([color.print for color in self.right[2]])} │ {" ".join([color.print for color in self.back[2][::-1]])} │
 └───────┼───────┼───────┴───────┘
-        │ {' '.join(map(c, self.down[0]))} │
-        │ {' '.join(map(c, self.down[1]))} │
-        │ {' '.join(map(c, self.down[2]))} │
+        │ {" ".join([color.print for color in self.down[0]])} │
+        │ {" ".join([color.print for color in self.down[1]])} │
+        │ {" ".join([color.print for color in self.down[2]])} │
         └───────┘
-'''
+"""
 
     @staticmethod
     def random_mix(length: int):

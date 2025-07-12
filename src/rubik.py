@@ -8,6 +8,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(levelname)s: %(message)s ---- %(asctime)s'
 )
+
 parser = argparse.ArgumentParser(
     prog='Rubik',
     description="Rubik solver",

@@ -1,14 +1,16 @@
-from enum import Enum
+from functools import lru_cache
+from typing import NamedTuple
 
 
-class Color(Enum):
-    WHITE = 'W'
-    YELLOW = 'Y'
-    RED = 'R'
-    ORANGE = 'O'
-    BLUE = 'B'
-    GREEN = 'G'
-    BLACK = 'black'
+class Color:
+    value: str
+    print: str
+    hex: str
+
+    def __init__(self, value: str, print_code: str, hex_code: str):
+        self.value = value
+        self.print = print_code
+        self.hex = hex_code
 
     def __str__(self):
         return self.value
@@ -24,30 +26,16 @@ class Color(Enum):
         return False
 
 
-def c(color: Color):
-    match color:
-        case Color.BLUE:
-            return "\033[44m \033[0m"
-        case Color.GREEN:
-            return "\033[42m \033[0m"
-        case Color.YELLOW:
-            return "\033[43m \033[0m"
-        case Color.WHITE:
-            return "\033[47m \033[0m"
-        case Color.RED:
-            return "\033[41m \033[0m"
-        case Color.ORANGE:
-            return "\033[48;5;208m \033[0m"
-        case _:
-            raise ValueError('Invalid color')
+class Colors(NamedTuple):
+    WHITE:  Color = Color("White",  "W", "#FFFFFF")
+    YELLOW: Color = Color("Yellow", "Y", "#FFFF00")
+    RED:    Color = Color("Red",    "R", "#FF0000")
+    ORANGE: Color = Color("Orange", "O", "#FFAA00")
+    BLUE:   Color = Color("Blue",   "B", "#0000FF")
+    GREEN:  Color = Color("Green",  "G", "#00FF00")
+    BLACK:  Color = Color("Black",  "K", "#000000")
 
 
-colors = {
-    Color.WHITE: '#FFFFFF',
-    Color.YELLOW: '#FFFF00',
-    Color.RED: '#FF0000',
-    Color.ORANGE: "#FFAA00",
-    Color.BLUE: '#0000FF',
-    Color.GREEN: '#00FF00',
-    Color.BLACK: "#000000"
-}
+@lru_cache(maxsize=1)
+def get_colors():
+    return Colors()

@@ -1,37 +1,17 @@
 import logging
-import argparse
+
+from arg_parser import arg_parser
 from classes.Rubik import Rubik
 from classes.Application import Application
 from classes.Resolver import Resolver
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(levelname)s: %(message)s ---- %(asctime)s'
-)
-
-parser = argparse.ArgumentParser(
-    prog='Rubik',
-    description="Rubik solver",
-)
-mix_group = parser.add_mutually_exclusive_group(required=True)
-mix_group.add_argument(
-    '-r', '--random',
-    action='store_true',  # Always true if provided
-    help="generate a random mix"
-)
-mix_group.add_argument(
-    '-m', '--mix',
-    type=str,
-    help='provide mix senquence'
-)
-random_group = parser.add_argument_group("options for --random")
-random_group.add_argument(
-    '--range',
-    type=int,
-    help='choose the number of action in the random mix sequence (default 20)'
+    format='%(levelname)s: %(message)-20s ---- %(asctime)s'
 )
 
 if __name__ == "__main__":
+    parser = arg_parser()
     args = parser.parse_args()
     random_range = 20
     if args.random:

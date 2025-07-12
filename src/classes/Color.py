@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import NamedTuple
 
 
@@ -35,5 +36,6 @@ class Colors(NamedTuple):
     BLACK:  Color = Color("Black",  "K", "#000000")
 
 
+@lru_cache(maxsize=1)
 def get_colors():
     return Colors()

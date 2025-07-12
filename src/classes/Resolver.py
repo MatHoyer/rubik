@@ -1,20 +1,26 @@
 import logging
 from .Position import Position, PRIME , DOUBLE
 from .Rubik import Rubik
+import numpy as np
 
 
 class Resolver:
     def __init__(self, rubik: Rubik):
         self.rubik = rubik
-        logging.info('STEP 1')
+        logging.info("STEP 1")
         self.up_cross()
-        logging.info('STEP 2')
+        logging.info("STEP 2")
         self.up_corners()
 
     def up_cross(self):
-        order = [self.rubik.front[1, 1], self.rubik.right[1, 1], self.rubik.back[1, 1], self.rubik.left[1, 1]]
+        order = [
+            self.rubik.front.get_color(),
+            self.rubik.right.get_color(),
+            self.rubik.back.get_color(),
+            self.rubik.left.get_color(),
+        ]
         for i in range(len(order)):
-            self.search_edges_for_up_cross([self.rubik.up[1, 1], order[i]])
+            self.search_edges_for_up_cross([self.rubik.up.get_color(), order[i]])
             if self.rubik.front[0, 1] != order[i]:
                 self.do_moves([
                     Position.FRONT.counter_clockwise(),
@@ -92,10 +98,15 @@ class Resolver:
             raise "PROBLEM UP CROSS"
 
     def up_corners(self):
-        order = [self.rubik.front[1, 1], self.rubik.right[1, 1], self.rubik.back[1, 1], self.rubik.left[1, 1]]
+        order = [
+            self.rubik.front.get_color(),
+            self.rubik.right.get_color(),
+            self.rubik.back.get_color(),
+            self.rubik.left.get_color(),
+        ]
         for i in range(len(order)):
-            self.search_corner_for_up([self.rubik.up[1, 1], order[i], order[i - 1]])
-            self.good_orientation_for_corner([self.rubik.up[1, 1], order[i], order[i - 1]])
+            self.search_corner_for_up([self.rubik.up.get_color(), order[i], order[i - 1]])
+            self.good_orientation_for_corner([self.rubik.up.get_color(), order[i], order[i - 1]])
             self.do_moves([
                 Position.UP.clockwise(),
             ])
@@ -216,4 +227,4 @@ class Resolver:
                 self.rubik.double_clockwise_rotate(Position.get_good_position(move[0]))
             else:
                 self.rubik.clockwise_rotate(Position.get_good_position(move[0]))
-        self.rubik.solution.extend(moves)
+        self.rubik.solution = np.append(self.rubik.solution, moves)

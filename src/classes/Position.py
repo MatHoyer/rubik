@@ -1,16 +1,16 @@
 from enum import Enum
 
-PRIME = ['\'', '’']
-DOUBLE = '2'
+PRIME = ["\'", "’"]
+DOUBLE = "2"
 
 
 class Position(Enum):
-    UP = 'U'
-    DOWN = 'D'
-    RIGHT = 'R'
-    LEFT = 'L'
-    FRONT = 'F'
-    BACK = 'B'
+    UP = "U"
+    DOWN = "D"
+    RIGHT = "R"
+    LEFT = "L"
+    FRONT = "F"
+    BACK = "B"
 
     @staticmethod
     def get_positions():

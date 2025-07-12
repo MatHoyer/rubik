@@ -27,13 +27,13 @@ class Color:
 
 
 class Colors(NamedTuple):
-    WHITE:  Color = Color("White",  "W", "#FFFFFF")
-    YELLOW: Color = Color("Yellow", "Y", "#FFFF00")
-    RED:    Color = Color("Red",    "R", "#FF0000")
-    ORANGE: Color = Color("Orange", "O", "#FFAA00")
-    BLUE:   Color = Color("Blue",   "B", "#0000FF")
-    GREEN:  Color = Color("Green",  "G", "#00FF00")
-    BLACK:  Color = Color("Black",  "K", "#000000")
+    WHITE:  Color = Color("White",  "\033[47m \033[0m",         "#FFFFFF")
+    YELLOW: Color = Color("Yellow", "\033[43m \033[0m",         "#FFFF00")
+    RED:    Color = Color("Red",    "\033[41m \033[0m",         "#FF0000")
+    ORANGE: Color = Color("Orange", "\033[48;5;208m \033[0m",   "#FFAA00")
+    BLUE:   Color = Color("Blue",   "\033[44m \033[0m",         "#0000FF")
+    GREEN:  Color = Color("Green",  "\033[42m \033[0m",         "#00FF00")
+    BLACK:  Color = Color("Black",  "\033[40m \033[0m",         "#000000")
 
 
 @lru_cache(maxsize=1)

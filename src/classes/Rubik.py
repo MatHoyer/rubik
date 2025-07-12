@@ -8,23 +8,26 @@ from .Position import Position, PRIME, DOUBLE
 
 
 class Faces(NamedTuple):
-    front: List[List[Color]]
-    back: List[List[Color]]
-    up: List[List[Color]]
-    down: List[List[Color]]
-    right: List[List[Color]]
-    left: List[List[Color]]
+    front:  List[List[Color]]
+    back:   List[List[Color]]
+    up:     List[List[Color]]
+    down:   List[List[Color]]
+    right:  List[List[Color]]
+    left:   List[List[Color]]
 
 
 class Face:
     def __init__(self, color: Color) -> None:
-        self._content = [[color for _ in range(3)] for _ in range(3)]
+        self._content = np.full((3, 3), fill_value=color, dtype=object)
 
     def __str__(self):
         return str(self._content)
 
     def __getitem__(self, key) -> List[Color]:
         return self._content[key]
+
+    def get_color(self) -> Color:
+        return self._content[1, 1]
 
     # Moves
     def get_line(self, index: int):
@@ -38,13 +41,13 @@ class Face:
 
     def change_line(self, index: int, colors: List[Color]):
         if not 0 <= index <= 2:
-            raise ValueError(f'Invalid index: expected between 0 and 2 get {index}')
+            raise ValueError(f"Invalid index: expected between 0 and 2 get {index}")
 
         self._content[index] = colors
 
     def change_col(self, index: int, colors: List[Color]):
         if not 0 <= index <= 2:
-            raise ValueError(f'Invalid index: expected between 0 and 2 get {index}')
+            raise ValueError(f"Invalid index: expected between 0 and 2 get {index}")
 
         for i in range(3):
             self._content[i][index] = colors[i]
@@ -66,15 +69,15 @@ class Rubik:
     right = Face(Colors().RED)
     left = Face(Colors().ORANGE)
 
-    mix: List[str] = []
-    solution: List[str] = []
+    mix = np.array([])
+    solution = np.array([])
 
     def __init__(self, mix: str | int) -> None:
         if isinstance(mix, int):
-            logging.info('Start random mix')
+            logging.info("Start random mix")
             mix = self.random_mix(length=mix)
-            logging.info(f'Random mix is: {mix}')
-        self.mix = mix.strip().split(' ')
+            logging.info(f"Random mix is: {mix}")
+        self.mix = np.array(mix.strip().split(" "))
         for instruction in self.mix:
             assert 1 <= len(instruction) <= 2
             assert instruction[0] in Position.get_positions()
@@ -108,10 +111,10 @@ class Rubik:
         mix = []
         positions = Position.get_positions()
         for _ in range(length):
-            instruction = '' + random.choice(positions).value
-            instruction += random.choice([PRIME[0], DOUBLE, ''])
+            instruction = "" + random.choice(positions).value
+            instruction += random.choice([PRIME[0], DOUBLE, ""])
             mix.append(instruction)
-        return ' '.join(mix)
+        return " ".join(mix)
 
     def get_faces(self):
         return Faces(
@@ -125,9 +128,9 @@ class Rubik:
 
     # Moves
     def find_good_action(self, instruction: str, _for_solution=False) -> None:
-        '''
+        """
         Instruction is a max 2caracs string like: "U", "F2"
-        '''
+        """
         position = Position.get_good_position(pos=instruction[0])
 
         if len(instruction) == 1:
@@ -141,7 +144,7 @@ class Rubik:
 
     def clockwise_rotate(self, position: Position, _from_double_rotate=False) -> None:
         if not _from_double_rotate:
-            logging.info(f'rotate: {position}')
+            logging.info(f"rotate: {position}")
 
         match position:
             case Position.UP:
@@ -206,7 +209,7 @@ class Rubik:
                 self.left.change_col(index=0, colors=colors_up[::-1])
 
     def counter_clockwise_rotate(self, position: Position) -> None:
-        logging.info(f'counter_rotate: {position}')
+        logging.info(f"counter_rotate: {position}")
         match position:
             case Position.UP:
                 colors_front = self.front.get_line(index=0)
@@ -270,6 +273,6 @@ class Rubik:
                 self.left.change_col(index=0, colors=colors_down)
 
     def double_clockwise_rotate(self, position: Position) -> None:
-        logging.info(f'double_rotate: {position}')
+        logging.info(f"double_rotate: {position}")
         for _ in range(2):
             self.clockwise_rotate(position=position, _from_double_rotate=True)

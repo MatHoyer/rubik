@@ -1,5 +1,5 @@
 from ursina import Entity, application, invoke, curve, held_keys
-from typing import List
+
 from .Rubik3D import Rubik3D
 from .Position import PRIME, DOUBLE
 from .globals import ANIMATION_TIME
@@ -36,7 +36,7 @@ class InputHandler(Entity):
                 case "r":
                     self.do_right(held_keys["shift"])
 
-    def do_mix(self, mix: List[str]):
+    def do_mix(self, mix):
         self.is_mix = True
         self.rubik3D.progression.next_step(len(mix))
         func_dict = {

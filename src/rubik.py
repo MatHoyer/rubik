@@ -1,13 +1,14 @@
 import logging
 
 from arg_parser import arg_parser
+
 from classes.Rubik import Rubik
-from classes.Application import Application
 from classes.Resolver import Resolver
+from classes.Application import Application
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(levelname)s: %(message)-20s ---- %(asctime)s'
+    format="%(levelname)s: %(message)-20s ---- %(asctime)s"
 )
 
 if __name__ == "__main__":

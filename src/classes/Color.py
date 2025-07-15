@@ -1,5 +1,6 @@
 from functools import lru_cache
 from typing import NamedTuple
+from .globals import UP_COLOR, DOWN_COLOR, FRONT_COLOR, BACK_COLOR, LEFT_COLOR, RIGHT_COLOR
 
 
 class Color:
@@ -36,6 +37,78 @@ class Colors(NamedTuple):
     BLACK:  Color = Color("Black",  "\033[40m \033[0m",         "#000000")
 
 
+class ColorForFace(NamedTuple):
+    up:     Color
+    down:   Color
+    front:  Color
+    back:   Color
+    left:   Color
+    right:  Color
+
+
+class FaceColors(NamedTuple):
+    UP:     ColorForFace
+    DOWN:   ColorForFace
+    FRONT:  ColorForFace
+    BACK:   ColorForFace
+    LEFT:   ColorForFace
+    RIGHT:  ColorForFace
+
+
 @lru_cache(maxsize=1)
 def get_colors():
     return Colors()
+
+
+@lru_cache(maxsize=1)
+def get_colors_faces():
+    return FaceColors(
+        UP=ColorForFace(
+            up=getattr(get_colors(), BACK_COLOR),
+            down=getattr(get_colors(), FRONT_COLOR),
+            front=getattr(get_colors(), UP_COLOR),
+            back=getattr(get_colors(), DOWN_COLOR),
+            left=getattr(get_colors(), LEFT_COLOR),
+            right=getattr(get_colors(), RIGHT_COLOR),
+        ),
+        DOWN=ColorForFace(
+            up=getattr(get_colors(), FRONT_COLOR),
+            down=getattr(get_colors(), BACK_COLOR),
+            front=getattr(get_colors(), DOWN_COLOR),
+            back=getattr(get_colors(), UP_COLOR),
+            left=getattr(get_colors(), LEFT_COLOR),
+            right=getattr(get_colors(), RIGHT_COLOR),
+        ),
+        FRONT=ColorForFace(
+            up=getattr(get_colors(), UP_COLOR),
+            down=getattr(get_colors(), DOWN_COLOR),
+            front=getattr(get_colors(), FRONT_COLOR),
+            back=getattr(get_colors(), BACK_COLOR),
+            left=getattr(get_colors(), LEFT_COLOR),
+            right=getattr(get_colors(), RIGHT_COLOR),
+        ),
+        BACK=ColorForFace(
+            up=getattr(get_colors(), UP_COLOR),
+            down=getattr(get_colors(), DOWN_COLOR),
+            front=getattr(get_colors(), BACK_COLOR),
+            back=getattr(get_colors(), FRONT_COLOR),
+            left=getattr(get_colors(), RIGHT_COLOR),
+            right=getattr(get_colors(), LEFT_COLOR),
+        ),
+        LEFT=ColorForFace(
+            up=getattr(get_colors(), UP_COLOR),
+            down=getattr(get_colors(), DOWN_COLOR),
+            front=getattr(get_colors(), LEFT_COLOR),
+            back=getattr(get_colors(), RIGHT_COLOR),
+            left=getattr(get_colors(), BACK_COLOR),
+            right=getattr(get_colors(), FRONT_COLOR),
+        ),
+        RIGHT=ColorForFace(
+            up=getattr(get_colors(), UP_COLOR),
+            down=getattr(get_colors(), DOWN_COLOR),
+            front=getattr(get_colors(), RIGHT_COLOR),
+            back=getattr(get_colors(), LEFT_COLOR),
+            left=getattr(get_colors(), FRONT_COLOR),
+            right=getattr(get_colors(), BACK_COLOR),
+        ),
+    )

@@ -1,6 +1,6 @@
 from ursina import Entity, Vec3, EditorCamera, destroy
 from .Rubik import Rubik
-from .Color import get_colors as Colors
+from .Color import get_colors
 from .Progression import Progression
 import numpy as np
 
@@ -10,8 +10,8 @@ class Rubik3D:
         self.rubik = rubik
         self.cube = np.empty((3, 3, 3), dtype=object)
         self.set_rubik_struct()
-        Entity(model="sphere", color=Colors().BLACK.hex, scale=2, position=Vec3(1, -1, 1))
-        self.center = Entity(model="sphere", color=Colors().BLACK.hex, scale=1, position=Vec3(1, -1, 1))
+        Entity(model="sphere", color=get_colors().BLACK.hex, scale=2, position=Vec3(1, -1, 1))
+        self.center = Entity(model="sphere", color=get_colors().BLACK.hex, scale=1, position=Vec3(1, -1, 1))
         self.radius = .51
         self.faces = []
         self.set_faces()
@@ -22,7 +22,7 @@ class Rubik3D:
         for x in range(3):
             for y in range(3):
                 for z in range(3):
-                    self.cube[x, y, z] = Entity(model="cube", color=Colors().BLACK.hex,
+                    self.cube[x, y, z] = Entity(model="cube", color=get_colors().BLACK.hex,
                                                 position=Vec3(x, -y, z), scale=.9)
 
     def set_faces(self):
@@ -95,6 +95,6 @@ class Rubik3D:
                 for z in range(3):
                     destroy(self.cube[x, y, z])
         destroy(self.center)
-        self.center = Entity(model="sphere", color=Colors().BLACK.hex, scale=1, position=Vec3(1, -1, 1))
+        self.center = Entity(model="sphere", color=get_colors().BLACK.hex, scale=1, position=Vec3(1, -1, 1))
         self.set_rubik_struct()
         self.set_faces()

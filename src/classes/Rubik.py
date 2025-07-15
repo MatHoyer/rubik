@@ -2,8 +2,9 @@ import numpy as np
 import logging
 from typing import List, NamedTuple
 import random
+from functools import lru_cache
 
-from .Color import Color, get_colors as Colors
+from .Color import Color, get_colors_faces
 from .Position import Position, PRIME, DOUBLE
 
 
@@ -60,14 +61,12 @@ class Face:
 
 
 class Rubik:
-    front = Face(Colors().GREEN)
-    back = Face(Colors().BLUE)
-
-    up = Face(Colors().WHITE)
-    down = Face(Colors().YELLOW)
-
-    right = Face(Colors().RED)
-    left = Face(Colors().ORANGE)
+    up = Face(get_colors_faces().FRONT.up)
+    down = Face(get_colors_faces().FRONT.down)
+    front = Face(get_colors_faces().FRONT.front)
+    back = Face(get_colors_faces().FRONT.back)
+    left = Face(get_colors_faces().FRONT.left)
+    right = Face(get_colors_faces().FRONT.right)
 
     mix = np.array([])
     solution = np.array([])
@@ -116,6 +115,7 @@ class Rubik:
             mix.append(instruction)
         return " ".join(mix)
 
+    @lru_cache(maxsize=1)
     def get_faces(self):
         return Faces(
             front=self.front._content,

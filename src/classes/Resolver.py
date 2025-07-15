@@ -1,6 +1,7 @@
 import logging
 from .Position import Position, PRIME , DOUBLE
 from .Rubik import Rubik
+from .Move import MoveForFace, get_moves
 import numpy as np
 
 
@@ -11,6 +12,8 @@ class Resolver:
         self.up_cross()
         logging.info("STEP 2")
         self.up_corners()
+        logging.info("STEP 3")
+        self.second_line()
 
     def up_cross(self):
         order = [
@@ -43,9 +46,9 @@ class Resolver:
             ])
         elif self.rubik.up[1, 0] in colors and self.rubik.left[0, 1] in colors:
             self.do_moves([
-                  Position.LEFT.double_clockwise(),
-                  Position.DOWN.clockwise(),
-                  Position.FRONT.double_clockwise(),
+                Position.LEFT.double_clockwise(),
+                Position.DOWN.clockwise(),
+                Position.FRONT.double_clockwise(),
             ])
         elif self.rubik.up[0, 1] in colors and self.rubik.back[0, 1] in colors:
             self.do_moves([
@@ -194,29 +197,94 @@ class Resolver:
                 Position.DOWN.clockwise(),
             ])
 
-    def belgian_story(self, left=False):
-        if left:
+    def second_line(self):
+        colors = [
+            self.rubik.front.get_color(),
+            self.rubik.right.get_color(),
+            self.rubik.back.get_color(),
+            self.rubik.left.get_color(),
+        ]
+        i = 0
+        while i < len(colors):
+            print(i)
+            if self.search_edges_for_second_line(colors):
+                i = -1
+            i += 1
+
+    def search_edges_for_second_line(self, colors: list[str]):
+        if self.rubik.front[2, 1] in colors and self.rubik.down[0, 1] in colors:
+            print(self.rubik.front[2, 1], self.rubik.down[0, 1])
+            if self.rubik.front[2, 1] is self.rubik.front.get_color():
+                if self.rubik.down[0, 1] is self.rubik.left.get_color():
+                    self.belgian_story(get_moves().FRONT, Position.LEFT)
+                elif self.rubik.down[0, 1] is self.rubik.right.get_color():
+                    self.belgian_story(get_moves().FRONT, Position.RIGHT)
+            elif self.rubik.front[2, 1] is self.rubik.right.get_color():
+                self.do_moves([Position.DOWN.clockwise()])
+                if self.rubik.down[1, 2] is self.rubik.front.get_color():
+                    self.belgian_story(get_moves().RIGHT, Position.LEFT)
+                elif self.rubik.down[1, 2] is self.rubik.back.get_color():
+                    self.belgian_story(get_moves().RIGHT, Position.RIGHT)
+            elif self.rubik.front[2, 1] is self.rubik.back.get_color():
+                self.do_moves([Position.DOWN.double_clockwise()])
+                if self.rubik.down[2, 1] is self.rubik.right.get_color():
+                    self.belgian_story(get_moves().BACK, Position.LEFT)
+                elif self.rubik.down[2, 1] is self.rubik.left.get_color():
+                    self.belgian_story(get_moves().BACK, Position.RIGHT)
+            elif self.rubik.front[2, 1] is self.rubik.left.get_color():
+                self.do_moves([Position.DOWN.counter_clockwise()])
+                if self.rubik.down[1, 0] is self.rubik.back.get_color():
+                    self.belgian_story(get_moves().LEFT, Position.LEFT)
+                elif self.rubik.down[1, 0] is self.rubik.front.get_color():
+                    self.belgian_story(get_moves().LEFT, Position.RIGHT)
+            return True
+        return False
+
+    def belgian_story(self, face : MoveForFace, direction : Position):
+        if direction == Position.LEFT:
             self.do_moves([
-                Position.DOWN.clockwise(),
-                Position.LEFT.counter_clockwise(),
-                Position.DOWN.counter_clockwise(),
-                Position.LEFT.clockwise(),
-                Position.DOWN.counter_clockwise(),
-                Position.FRONT.counter_clockwise(),
-                Position.DOWN.clockwise(),
-                Position.FRONT.clockwise(),
+                face.down.clockwise(),
+                face.left.clockwise(),
+                face.down.counter_clockwise(),
+                face.left.counter_clockwise(),
+                face.down.counter_clockwise(),
+                face.front.counter_clockwise(),
+                face.down.clockwise(),
+                face.front.clockwise(),
             ])
-        else:
+        elif direction == Position.RIGHT:
             self.do_moves([
-                Position.DOWN.counter_clockwise(),
-                Position.RIGHT.counter_clockwise(),
-                Position.DOWN.clockwise(),
-                Position.RIGHT.clockwise(),
-                Position.DOWN.clockwise(),
-                Position.FRONT.clockwise(),
-                Position.DOWN.counter_clockwise(),
-                Position.FRONT.counter_clockwise(),
+                face.down.counter_clockwise(),
+                face.right.counter_clockwise(),
+                face.down.clockwise(),
+                face.right.clockwise(),
+                face.down.clockwise(),
+                face.front.clockwise(),
+                face.down.counter_clockwise(),
+                face.front.counter_clockwise(),
             ])
+        # if left:
+        #     self.do_moves([
+        #         Position.DOWN.clockwise(),
+        #         Position.LEFT.counter_clockwise(),
+        #         Position.DOWN.counter_clockwise(),
+        #         Position.LEFT.clockwise(),
+        #         Position.DOWN.counter_clockwise(),
+        #         Position.FRONT.counter_clockwise(),
+        #         Position.DOWN.clockwise(),
+        #         Position.FRONT.clockwise(),
+        #     ])
+        # else:
+        #     self.do_moves([
+        #         Position.DOWN.counter_clockwise(),
+        #         Position.RIGHT.counter_clockwise(),
+        #         Position.DOWN.clockwise(),
+        #         Position.RIGHT.clockwise(),
+        #         Position.DOWN.clockwise(),
+        #         Position.FRONT.clockwise(),
+        #         Position.DOWN.counter_clockwise(),
+        #         Position.FRONT.counter_clockwise(),
+        #     ])
 
     def do_moves(self, moves: list[str]):
         for move in moves:

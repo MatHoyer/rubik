@@ -1,3 +1,4 @@
+import logging
 from ursina import Entity, Text, color, camera, invoke
 from .globals import ANIMATION_TIME
 
@@ -45,6 +46,7 @@ class Progression():
         Text("Press 'Space' for next step", position=(0, .35, 0), origin=(0, 0))
 
     def next_step(self, mixLen):
+        logging.info(f"NB OF MIX : {mixLen}")
         self.step += 1
         if self.step == 1 or self.step == 2:
             for i in range(mixLen):

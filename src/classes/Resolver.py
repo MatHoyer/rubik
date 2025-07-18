@@ -1,6 +1,8 @@
 import logging
 from .Position import Position, PRIME , DOUBLE
 from .Rubik import Rubik
+from .Move import MoveForFace, get_moves
+from .Color import get_colors_faces
 import numpy as np
 
 
@@ -11,6 +13,8 @@ class Resolver:
         self.up_cross()
         logging.info("STEP 2")
         self.up_corners()
+        logging.info("STEP 3")
+        self.second_line()
 
     def up_cross(self):
         order = [
@@ -43,9 +47,9 @@ class Resolver:
             ])
         elif self.rubik.up[1, 0] in colors and self.rubik.left[0, 1] in colors:
             self.do_moves([
-                  Position.LEFT.double_clockwise(),
-                  Position.DOWN.clockwise(),
-                  Position.FRONT.double_clockwise(),
+                Position.LEFT.double_clockwise(),
+                Position.DOWN.clockwise(),
+                Position.FRONT.double_clockwise(),
             ])
         elif self.rubik.up[0, 1] in colors and self.rubik.back[0, 1] in colors:
             self.do_moves([
@@ -194,28 +198,154 @@ class Resolver:
                 Position.DOWN.clockwise(),
             ])
 
-    def belgian_story(self, left=False):
-        if left:
+    def second_line(self):
+        colors = [
+            self.rubik.front.get_color(),
+            self.rubik.right.get_color(),
+            self.rubik.back.get_color(),
+            self.rubik.left.get_color(),
+        ]
+        for _ in range(len(colors)):
+            self.search_edges_for_second_line(colors)
+        if not self.check_second_line_good():
+            for _ in range(len(colors)):
+                self.search_edges_for_second_line(colors)
+
+    def search_edges_for_second_line(self, colors: list[str]):
+        if self.rubik.front[2, 1] in colors and self.rubik.down[0, 1] in colors:
+            if self.rubik.front[2, 1] is get_colors_faces().FRONT.front:
+                if self.rubik.down[0, 1] is get_colors_faces().FRONT.left:
+                    self.belgian_story(get_moves().FRONT, Position.LEFT)
+                elif self.rubik.down[0, 1] is get_colors_faces().FRONT.right:
+                    self.belgian_story(get_moves().FRONT, Position.RIGHT)
+            elif self.rubik.front[2, 1] is get_colors_faces().FRONT.right:
+                self.do_moves([Position.DOWN.clockwise()])
+                if self.rubik.down[1, 2] is get_colors_faces().FRONT.front:
+                    self.belgian_story(get_moves().RIGHT, Position.LEFT)
+                elif self.rubik.down[1, 2] is get_colors_faces().FRONT.back:
+                    self.belgian_story(get_moves().RIGHT, Position.RIGHT)
+            elif self.rubik.front[2, 1] is get_colors_faces().FRONT.back:
+                self.do_moves([Position.DOWN.double_clockwise()])
+                if self.rubik.down[2, 1] is get_colors_faces().FRONT.right:
+                    self.belgian_story(get_moves().BACK, Position.LEFT)
+                elif self.rubik.down[2, 1] is get_colors_faces().FRONT.left:
+                    self.belgian_story(get_moves().BACK, Position.RIGHT)
+            elif self.rubik.front[2, 1] is get_colors_faces().FRONT.left:
+                self.do_moves([Position.DOWN.counter_clockwise()])
+                if self.rubik.down[1, 0] is get_colors_faces().FRONT.back:
+                    self.belgian_story(get_moves().LEFT, Position.LEFT)
+                elif self.rubik.down[1, 0] is get_colors_faces().FRONT.front:
+                    self.belgian_story(get_moves().LEFT, Position.RIGHT)
+        elif self.rubik.right[2, 1] in colors and self.rubik.down[1, 2] in colors:
+            if self.rubik.right[2, 1] is get_colors_faces().RIGHT.front:
+                if self.rubik.down[1, 2] is get_colors_faces().RIGHT.left:
+                    self.belgian_story(get_moves().RIGHT, Position.LEFT)
+                elif self.rubik.down[1, 2] is get_colors_faces().RIGHT.right:
+                    self.belgian_story(get_moves().RIGHT, Position.RIGHT)
+            elif self.rubik.right[2, 1] is get_colors_faces().RIGHT.right:
+                self.do_moves([Position.DOWN.clockwise()])
+                if self.rubik.down[2, 1] is get_colors_faces().RIGHT.front:
+                    self.belgian_story(get_moves().BACK, Position.LEFT)
+                elif self.rubik.down[2, 1] is get_colors_faces().RIGHT.back:
+                    self.belgian_story(get_moves().BACK, Position.RIGHT)
+            elif self.rubik.right[2, 1] is get_colors_faces().RIGHT.back:
+                self.do_moves([Position.DOWN.double_clockwise()])
+                if self.rubik.down[1, 0] is get_colors_faces().RIGHT.right:
+                    self.belgian_story(get_moves().LEFT, Position.LEFT)
+                elif self.rubik.down[1, 0] is get_colors_faces().RIGHT.left:
+                    self.belgian_story(get_moves().LEFT, Position.RIGHT)
+            elif self.rubik.right[2, 1] is get_colors_faces().RIGHT.left:
+                self.do_moves([Position.DOWN.counter_clockwise()])
+                if self.rubik.down[0, 1] is get_colors_faces().RIGHT.back:
+                    self.belgian_story(get_moves().FRONT, Position.LEFT)
+                elif self.rubik.down[0, 1] is get_colors_faces().RIGHT.front:
+                    self.belgian_story(get_moves().FRONT, Position.RIGHT)
+        elif self.rubik.back[2, 1] in colors and self.rubik.down[2, 1] in colors:
+            if self.rubik.back[2, 1] is get_colors_faces().BACK.front:
+                if self.rubik.down[2, 1] is get_colors_faces().BACK.left:
+                    self.belgian_story(get_moves().BACK, Position.LEFT)
+                elif self.rubik.down[2, 1] is get_colors_faces().BACK.right:
+                    self.belgian_story(get_moves().BACK, Position.RIGHT)
+            elif self.rubik.back[2, 1] is get_colors_faces().BACK.right:
+                self.do_moves([Position.DOWN.clockwise()])
+                if self.rubik.down[1, 0] is get_colors_faces().BACK.front:
+                    self.belgian_story(get_moves().LEFT, Position.LEFT)
+                elif self.rubik.down[1, 0] is get_colors_faces().BACK.back:
+                    self.belgian_story(get_moves().LEFT, Position.RIGHT)
+            elif self.rubik.back[2, 1] is get_colors_faces().BACK.back:
+                self.do_moves([Position.DOWN.double_clockwise()])
+                if self.rubik.down[0, 1] is get_colors_faces().BACK.right:
+                    self.belgian_story(get_moves().FRONT, Position.LEFT)
+                elif self.rubik.down[0, 1] is get_colors_faces().BACK.left:
+                    self.belgian_story(get_moves().FRONT, Position.RIGHT)
+            elif self.rubik.back[2, 1] is get_colors_faces().BACK.left:
+                self.do_moves([Position.DOWN.counter_clockwise()])
+                if self.rubik.down[1, 2] is get_colors_faces().BACK.back:
+                    self.belgian_story(get_moves().RIGHT, Position.LEFT)
+                elif self.rubik.down[1, 2] is get_colors_faces().BACK.front:
+                    self.belgian_story(get_moves().RIGHT, Position.RIGHT)
+        elif self.rubik.left[2, 1] in colors and self.rubik.down[1, 0] in colors:
+            if self.rubik.left[2, 1] is get_colors_faces().LEFT.front:
+                if self.rubik.down[1, 0] is get_colors_faces().LEFT.left:
+                    self.belgian_story(get_moves().LEFT, Position.LEFT)
+                elif self.rubik.down[1, 0] is get_colors_faces().LEFT.right:
+                    self.belgian_story(get_moves().LEFT, Position.RIGHT)
+            elif self.rubik.left[2, 1] is get_colors_faces().LEFT.right:
+                self.do_moves([Position.DOWN.clockwise()])
+                if self.rubik.down[0, 1] is get_colors_faces().LEFT.front:
+                    self.belgian_story(get_moves().FRONT, Position.LEFT)
+                elif self.rubik.down[0, 1] is get_colors_faces().LEFT.back:
+                    self.belgian_story(get_moves().FRONT, Position.RIGHT)
+            elif self.rubik.left[2, 1] is get_colors_faces().LEFT.back:
+                self.do_moves([Position.DOWN.double_clockwise()])
+                if self.rubik.down[1, 2] is get_colors_faces().LEFT.right:
+                    self.belgian_story(get_moves().RIGHT, Position.LEFT)
+                elif self.rubik.down[1, 2] is get_colors_faces().LEFT.left:
+                    self.belgian_story(get_moves().RIGHT, Position.RIGHT)
+            elif self.rubik.left[2, 1] is get_colors_faces().LEFT.left:
+                self.do_moves([Position.DOWN.counter_clockwise()])
+                if self.rubik.down[2, 1] is get_colors_faces().LEFT.back:
+                    self.belgian_story(get_moves().BACK, Position.LEFT)
+                elif self.rubik.down[2, 1] is get_colors_faces().LEFT.front:
+                    self.belgian_story(get_moves().BACK, Position.RIGHT)
+
+    def check_second_line_good(self):
+        if self.rubik.front[1, 0] is not get_colors_faces().FRONT.front:
+            self.belgian_story(get_moves().FRONT, Position.LEFT)
+            return False
+        elif self.rubik.right[1, 0] is not get_colors_faces().FRONT.right:
+            self.belgian_story(get_moves().RIGHT, Position.LEFT)
+            return False
+        elif self.rubik.back[1, 2] is not get_colors_faces().FRONT.back:
+            self.belgian_story(get_moves().BACK, Position.LEFT)
+            return False
+        elif self.rubik.left[1, 0] is not get_colors_faces().FRONT.left:
+            self.belgian_story(get_moves().LEFT, Position.LEFT)
+            return False
+        return True
+
+    def belgian_story(self, face : MoveForFace, direction : Position):
+        if direction == Position.LEFT:
             self.do_moves([
-                Position.DOWN.clockwise(),
-                Position.LEFT.counter_clockwise(),
-                Position.DOWN.counter_clockwise(),
-                Position.LEFT.clockwise(),
-                Position.DOWN.counter_clockwise(),
-                Position.FRONT.counter_clockwise(),
-                Position.DOWN.clockwise(),
-                Position.FRONT.clockwise(),
+                face.down.clockwise(),
+                face.left.clockwise(),
+                face.down.counter_clockwise(),
+                face.left.counter_clockwise(),
+                face.down.counter_clockwise(),
+                face.front.counter_clockwise(),
+                face.down.clockwise(),
+                face.front.clockwise(),
             ])
-        else:
+        elif direction == Position.RIGHT:
             self.do_moves([
-                Position.DOWN.counter_clockwise(),
-                Position.RIGHT.counter_clockwise(),
-                Position.DOWN.clockwise(),
-                Position.RIGHT.clockwise(),
-                Position.DOWN.clockwise(),
-                Position.FRONT.clockwise(),
-                Position.DOWN.counter_clockwise(),
-                Position.FRONT.counter_clockwise(),
+                face.down.counter_clockwise(),
+                face.right.counter_clockwise(),
+                face.down.clockwise(),
+                face.right.clockwise(),
+                face.down.clockwise(),
+                face.front.clockwise(),
+                face.down.counter_clockwise(),
+                face.front.counter_clockwise(),
             ])
 
     def do_moves(self, moves: list[str]):

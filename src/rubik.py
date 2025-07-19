@@ -23,7 +23,8 @@ if __name__ == "__main__":
             parser.error("Option --range can\'t be used without --random")
 
     rubik = Rubik(mix=args.mix if args.mix else random_range)
-    print(rubik)
     Resolver(rubik)
-    app = Application(rubik)
-    app.run()
+
+    if args.with_3D:
+        app = Application(rubik)
+        app.run()

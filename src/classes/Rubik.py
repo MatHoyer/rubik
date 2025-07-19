@@ -144,7 +144,7 @@ class Rubik:
 
     def clockwise_rotate(self, position: Position, _from_double_rotate=False) -> None:
         if not _from_double_rotate:
-            logging.info(f"rotate: {position}")
+            print(f"{"rotate":<16}: {position}")
 
         match position:
             case Position.UP:
@@ -209,7 +209,7 @@ class Rubik:
                 self.left.change_col(index=0, colors=colors_up[::-1])
 
     def counter_clockwise_rotate(self, position: Position) -> None:
-        logging.info(f"counter_rotate: {position}")
+        print(f"{"counter_rotate":<16}: {position}")
         match position:
             case Position.UP:
                 colors_front = self.front.get_line(index=0)
@@ -273,6 +273,6 @@ class Rubik:
                 self.left.change_col(index=0, colors=colors_down)
 
     def double_clockwise_rotate(self, position: Position) -> None:
-        logging.info(f"double_rotate: {position}")
+        print(f"{"double_rotate":<16}: {position}")
         for _ in range(2):
             self.clockwise_rotate(position=position, _from_double_rotate=True)

@@ -26,4 +26,10 @@ def arg_parser():
         help="choose the number of action in the random mix sequence (default 20)"
     )
 
+    parser.add_argument(
+        "-3D", "--with-3D",
+        action="store_true",
+        help="Display a window with 3D rubic"
+    )
+
     return parser

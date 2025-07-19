@@ -8,13 +8,19 @@ import numpy as np
 
 class Resolver:
     def __init__(self, rubik: Rubik):
+        logging.info("Start resolving")
+
         self.rubik = rubik
         logging.info("STEP 1")
         self.up_cross()
+
         logging.info("STEP 2")
         self.up_corners()
+
         logging.info("STEP 3")
         self.second_line()
+
+        logging.info("Resolved")
 
     def up_cross(self):
         order = [

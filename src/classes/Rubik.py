@@ -30,6 +30,9 @@ class Face:
     def get_color(self) -> Color:
         return self._content[1, 1]
 
+    def set_color(self, x, y, color):
+        self._content[x, y] = color
+
     # Moves
     def get_line(self, index: int):
         return np.copy(self._content[index])

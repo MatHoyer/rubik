@@ -134,16 +134,16 @@ class Rubik:
         position = Position.get_good_position(pos=instruction[0])
 
         if len(instruction) == 1:
-            self.clockwise_rotate(position=position)
+            self.clockwise_rotate(position=position, _for_solution=_for_solution)
         elif instruction[1] in PRIME:
-            self.counter_clockwise_rotate(position=position)
+            self.counter_clockwise_rotate(position=position, _for_solution=_for_solution)
         elif instruction[1] == DOUBLE:
-            self.double_clockwise_rotate(position=position)
+            self.double_clockwise_rotate(position=position, _for_solution=_for_solution)
         if _for_solution:
             self.solution.append(position)
 
-    def clockwise_rotate(self, position: Position, _from_double_rotate=False) -> None:
-        if not _from_double_rotate:
+    def clockwise_rotate(self, position: Position, _from_double_rotate=False, _for_solution=True) -> None:
+        if not _from_double_rotate and _for_solution:
             print(f"{"rotate":<16}: {position}")
 
         match position:
@@ -208,8 +208,10 @@ class Rubik:
                 self.down.change_line(index=2, colors=colors_left)
                 self.left.change_col(index=0, colors=colors_up[::-1])
 
-    def counter_clockwise_rotate(self, position: Position) -> None:
-        print(f"{"counter_rotate":<16}: {position}")
+    def counter_clockwise_rotate(self, position: Position, _for_solution=True) -> None:
+        if _for_solution:
+            print(f"{"counter_rotate":<16}: {position}")
+
         match position:
             case Position.UP:
                 colors_front = self.front.get_line(index=0)
@@ -272,7 +274,9 @@ class Rubik:
                 self.down.change_line(index=2, colors=colors_right[::-1])
                 self.left.change_col(index=0, colors=colors_down)
 
-    def double_clockwise_rotate(self, position: Position) -> None:
-        print(f"{"double_rotate":<16}: {position}")
+    def double_clockwise_rotate(self, position: Position, _for_solution=True) -> None:
+        if _for_solution:
+            print(f"{"double_rotate":<16}: {position}")
+
         for _ in range(2):
             self.clockwise_rotate(position=position, _from_double_rotate=True)

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ITERATIONS=10
+ITERATIONS=100
 global_count=0
 exec_count=0
 

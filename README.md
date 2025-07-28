@@ -15,3 +15,5 @@ install dependances
 ```bash
 pip install -r requirement.txt
 ```
+
+Specific test : - "U' R2 U' F2 D' R2 U' B F U2 L' B2 R2 F2 D' U F' U2 L' R'"

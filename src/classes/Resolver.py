@@ -2,7 +2,7 @@ import logging
 from .Position import Position, PRIME , DOUBLE
 from .Rubik import Rubik
 from .Color import get_colors_faces
-from .Edges import Edges, get_edges
+from .Edges import Edges, get_edges, case_2_bad_edges, case_6_bad_edges, case_default_bad_edges
 import numpy as np
 
 
@@ -15,59 +15,30 @@ class Resolver:
 
     def solve_eo(self):
         bad_edges = self.eo_detection()
-        print(sum(bad_edges))
+        front_nb = sum([
+            bad_edges[Edges.UP_FRONT],
+            bad_edges[Edges.DOWN_FRONT],
+            bad_edges[Edges.FRONT_LEFT],
+            bad_edges[Edges.FRONT_RIGHT],
+        ])
+        back_nb = sum([
+            bad_edges[Edges.UP_BACK],
+            bad_edges[Edges.DOWN_BACK],
+            bad_edges[Edges.BACK_LEFT],
+            bad_edges[Edges.BACK_RIGHT],
+        ])
         match sum(bad_edges):
             case 0:
                 return
             case 2:
-                nb = sum([
-                    bad_edges[Edges.UP_FRONT],
-                    bad_edges[Edges.DOWN_FRONT],
-                    bad_edges[Edges.FRONT_LEFT],
-                    bad_edges[Edges.FRONT_RIGHT],
-                ])
-                if nb:
-                    if nb == 2:
-                        if bad_edges[Edges.UP_FRONT]:
-                            self.do_moves([Position.UP.clockwise()])
-                        elif bad_edges[Edges.FRONT_LEFT]:
-                            self.do_moves([Position.LEFT.clockwise()])
-                        else:
-                            self.do_moves([Position.RIGHT.clockwise()])
-                    self.do_moves([Position.FRONT.clockwise()])
-                else:
-                    nb = sum([
-                        bad_edges[Edges.UP_BACK],
-                        bad_edges[Edges.DOWN_BACK],
-                        bad_edges[Edges.BACK_LEFT],
-                        bad_edges[Edges.BACK_RIGHT],
-                    ])
-                    if nb:
-                        if nb == 2:
-                            if bad_edges[Edges.UP_BACK]:
-                                self.do_moves([Position.UP.clockwise()])
-                            elif bad_edges[Edges.BACK_RIGHT]:
-                                self.do_moves([Position.LEFT.clockwise()])
-                            else:
-                                self.do_moves([Position.RIGHT.clockwise()])
-                        self.do_moves([Position.BACK.clockwise()])
-                    else:
-                        if bad_edges[2]:
-                            self.do_moves([Position.RIGHT.counter_clockwise()])
-                        elif bad_edges[6]:
-                            self.do_moves([Position.RIGHT.clockwise()])
-                        elif bad_edges[1]:
-                            self.do_moves([Position.LEFT.clockwise()])
-                        elif bad_edges[5]:
-                            self.do_moves([Position.LEFT.counter_clockwise()])
-                        self.do_moves([Position.FRONT.clockwise()])
+                case_2_bad_edges(bad_edges, front_nb, back_nb, self.do_moves)
             case 6:
-                pass
+                case_6_bad_edges(bad_edges, front_nb, back_nb, self.do_moves)
             case _:
-                pass
+                case_default_bad_edges(bad_edges, front_nb, back_nb, self.do_moves, self.eo_detection)
         bad_edges = self.eo_detection()
-        print(sum(bad_edges))
-        print(self.rubik.solution)
+        if sum(bad_edges):
+            self.solve_eo()
 
     def eo_detection(self):
         edges = get_edges(self.rubik)

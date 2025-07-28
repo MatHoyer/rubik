@@ -30,9 +30,6 @@ class Face:
     def get_color(self) -> Color:
         return self._content[1, 1]
 
-    def set_color(self, x, y, color):
-        self._content[x, y] = color
-
     def copy(self):
         new_face = Face.__new__(Face)
         new_face._content = np.array(self._content, copy=True)

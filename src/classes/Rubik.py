@@ -30,6 +30,11 @@ class Face:
     def get_color(self) -> Color:
         return self._content[1, 1]
 
+    def copy(self):
+        new_face = Face.__new__(Face)
+        new_face._content = np.array(self._content, copy=True)
+        return new_face
+
     # Moves
     def get_line(self, index: int):
         return np.copy(self._content[index])
@@ -104,6 +109,18 @@ class Rubik:
         │ {" ".join([color.print for color in self.down[2]])} │
         └───────┘
 """
+
+    def copy_rubik(self):
+        new_rubik = Rubik.__new__(Rubik)
+        new_rubik.up = self.up.copy()
+        new_rubik.down = self.down.copy()
+        new_rubik.front = self.front.copy()
+        new_rubik.back = self.back.copy()
+        new_rubik.left = self.left.copy()
+        new_rubik.right = self.right.copy()
+        new_rubik.mix = self.mix
+        new_rubik.solution = self.solution
+        return new_rubik
 
     @staticmethod
     def random_mix(length: int):

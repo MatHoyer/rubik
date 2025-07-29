@@ -1,0 +1,11 @@
+
+
+class Corners:
+    UP_BACK_LEFT = 0
+    UP_BACK_RIGHT = 1
+    UP_FRONT_LEFT = 2
+    UP_FRONT_RIGHT = 3
+    DOWN_FRONT_LEFT = 4
+    DOWN_FRONT_RIGHT = 5
+    DOWN_BACK_LEFT = 6
+    DOWN_BACK_RIGHT = 7

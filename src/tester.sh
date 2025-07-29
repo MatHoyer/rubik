@@ -17,7 +17,7 @@ show_progress() {
     for ((j=0; j<completed; j++)); do bar+="█"; done
     for ((j=0; j<remaining; j++)); do bar+="░"; done
     
-    printf "\r[%s] %3d%% (%d/%d) - Moyenne : %d " "$bar" "$percentage" "$current" "$total" "$average"
+    printf "\r%s -- %3d%% (%d/%d) - Moyenne : %d " "$bar" "$percentage" "$current" "$total" "$average"
 }
 
 for ((i=0; i<ITERATIONS; i++)); do

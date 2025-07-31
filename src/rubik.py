@@ -3,7 +3,7 @@ import logging
 from arg_parser import arg_parser
 
 from classes.Rubik import Rubik
-from classes.Resolver import Resolver
+from classes.resolver.Resolver import Resolver
 from classes.Application import Application
 
 logging.basicConfig(

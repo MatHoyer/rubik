@@ -38,9 +38,10 @@ for ((i=0; i<ITERATIONS; i++)); do
     else
         echo "Iteration $((i+1)): Python execution failed with exit code $?" >> error.log
         cat /tmp/error.tmp >> error.log
-        rm /tmp/error.tmp
+        echo -e "\nWarning: Error"
         echo "" >> error.log
     fi
+    rm /tmp/error.tmp
 
     if [ $exec_count -gt 0 ]; then
         average=$((global_count / exec_count))

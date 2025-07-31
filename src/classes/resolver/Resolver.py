@@ -1,8 +1,10 @@
 import logging
-from .Position import Position, PRIME , DOUBLE
-from .Rubik import Rubik
-from .Color import get_colors_faces
-from .Edges import Edges, get_edges, case_2_bad_edges, case_6_bad_edges, case_default_bad_edges
+from ..Position import Position, PRIME , DOUBLE
+from ..Rubik import Rubik
+from ..Color import get_colors_faces
+from ..Edges import Edges, get_edges
+from .EdgeOrientation import EdgeOrientation
+from .DominoReduction import DominoReduction
 import numpy as np
 
 
@@ -10,45 +12,38 @@ class Resolver:
     def __init__(self, rubik: Rubik):
         self.rubik = rubik
         logging.info("Start resolving")
-        self.solve_eo()
+        EdgeOrientation.edge_orientation(self.do_moves, self.eo_detection)
+        DominoReduction.domino_reduction(self.do_moves, self.e_slice_detection)
         # self.ida_star(None, g1_moves, 7, self.rubik.copy_rubik())
-
-    def solve_eo(self):
-        bad_edges = self.eo_detection()
-        front_nb = sum([
-            bad_edges[Edges.UP_FRONT],
-            bad_edges[Edges.DOWN_FRONT],
-            bad_edges[Edges.FRONT_LEFT],
-            bad_edges[Edges.FRONT_RIGHT],
-        ])
-        back_nb = sum([
-            bad_edges[Edges.UP_BACK],
-            bad_edges[Edges.DOWN_BACK],
-            bad_edges[Edges.BACK_LEFT],
-            bad_edges[Edges.BACK_RIGHT],
-        ])
-        match sum(bad_edges):
-            case 0:
-                return
-            case 2:
-                case_2_bad_edges(bad_edges, front_nb, back_nb, self.do_moves)
-            case 6:
-                case_6_bad_edges(bad_edges, front_nb, back_nb, self.do_moves)
-            case _:
-                case_default_bad_edges(bad_edges, front_nb, back_nb, self.do_moves, self.eo_detection)
-        bad_edges = self.eo_detection()
-        if sum(bad_edges):
-            self.solve_eo()
 
     def eo_detection(self):
         edges = get_edges(self.rubik)
+        bad_edges = []
         for edge in edges:
             if edge["edge"][0] in [get_colors_faces().FRONT.left, get_colors_faces().FRONT.right]:
-                edge["bad"] = True
+                bad_edges.append(True)
             elif edge["edge"][0] in [get_colors_faces().FRONT.front, get_colors_faces().FRONT.back]:
                 if edge["edge"][1] in [get_colors_faces().FRONT.up, get_colors_faces().FRONT.down]:
-                    edge["bad"] = True
-        return [edge["bad"] for edge in edges]
+                    bad_edges.append(True)
+                else:
+                    bad_edges.append(False)
+            else:
+                bad_edges.append(False)
+        return bad_edges
+
+    def e_slice_detection(self):
+        edges = get_edges(self.rubik)
+        bad_edges = []
+        for edge in edges:
+            if Edges.UP_BACK <= edge["face"] <= Edges.DOWN_BACK and \
+                    edge["edge"][0] not in [get_colors_faces().FRONT.up, get_colors_faces().FRONT.down]:
+                bad_edges.append(True)
+            elif Edges.FRONT_LEFT <= edge["face"] <= Edges.BACK_RIGHT and \
+                    edge["edge"][0] in [get_colors_faces().FRONT.up, get_colors_faces().FRONT.down]:
+                bad_edges.append(True)
+            else:
+                bad_edges.append(False)
+        return bad_edges
 
     def ida_star(self, first_move, moves, heuristic, rubik: Rubik):
         if len(rubik.solution) > heuristic:
